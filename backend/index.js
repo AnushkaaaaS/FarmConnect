@@ -353,6 +353,33 @@ app.post('/api/login', async (req, res) => {
 });
 
 
+app.post('/api/admin-login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Find the buyer by email
+    const buyer = await Buyer.findOne({ email });
+    if (buyer!="abcd@gmail.com") {
+      return res.status(400).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    // Check the password
+    const isMatch = await bcrypt.compare(password, buyer.password);
+    if (!isMatch) {
+      return res.status(400).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    // Generate JWT token
+    
+
+    res.json({ success: true, message: 'Login successful!' });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ success: false, message: 'Error logging in' });
+  }
+});
+
+
 // Farmer Login Route
 app.post('/api/farmer-login', async (req, res) => {
   const { email, password } = req.body;

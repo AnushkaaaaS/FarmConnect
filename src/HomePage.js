@@ -35,6 +35,9 @@ const HomePage = () => {
   const handleFoodieClick = () => {
     navigate('/buyers');
   };
+  const handleAdminClick=()=>{
+    navigate('/admin-page')
+  }
 
   return (
     <div style={{
@@ -110,6 +113,15 @@ const HomePage = () => {
             <FaUtensils style={iconStyle} />
             I'm A Foodie
             <p style={{ fontSize: '16px', marginTop: '5px', color: '#d8ecf7' }}>For those who savor the goodness.</p>
+          </button>
+
+          <button
+            style={{ ...buttonStyle, backgroundColor: '#3182ce' }}
+            onClick={handleAdminClick}
+            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseOut={e => e.currentTarget.style.transform = 'scale(1)' }
+          >
+            I'm the Admin
           </button>
         </div>
       </div>

@@ -60,6 +60,7 @@ const AppRoutes = () => {
       <Route path="/subscription-form" element={<SubscriptionFormPage />} />
       <Route path="/subscription-form-farmer" element={<SubscriptionFarmerPage />} />
 
+
       <Route path="/admin-page" element={<AdminDashboardPage />} />
 
 
