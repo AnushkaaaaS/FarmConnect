@@ -1,0 +1,75 @@
+
+  .product-selling-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Align items at the start for better spacing */
+    min-height: 100vh;
+    background-color: #f8f9fa;
+    padding: 40px;
+}
+
+.product-selling-form,
+.farmer-details-form {
+    width: 100%;
+    max-width: 400px; /* Adjusted width for both forms */
+    padding: 30px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 10px; /* Space between forms */
+}
+
+.product-selling-form h2,
+.farmer-details-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Poppins', sans-serif;
+    color: #333;
+}
+
+.product-selling-form input,
+.product-selling-form textarea,
+.product-selling-form select,
+.farmer-details-form input,
+.farmer-details-form textarea,
+.farmer-details-form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.submit-button[disabled] {
+    background-color: #ccc;
+}
+
+.message {
+    text-align: center;
+    color: green;
+    margin-top: 10px;
+}
+
+/* Flex layout for forms */
+.form-container {
+    display: flex;
+    justify-content: space-between; /* Space between forms */
+}

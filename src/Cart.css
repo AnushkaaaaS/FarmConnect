@@ -1,0 +1,193 @@
+
+/* General styling for the cart page container */
+.cart-page-container {
+    padding: 20px;
+    max-width: 800px; 
+    margin: auto; 
+    background-color: #f9f9f9; 
+    border-radius: 8px; 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); 
+}
+
+.cart-page-container h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px; 
+}
+
+.cart-items {
+    display: flex; 
+    flex-direction: column; 
+}
+
+/* Individual cart item styling */
+.cart-item {
+    display: flex; 
+    background-color: #fff;
+    border: 1px solid #ddd; 
+    border-radius: 5px; 
+    padding: 15px; 
+    margin-bottom: 15px; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
+
+/* Scale effect on hover */
+.cart-item:hover {
+    transform: scale(1.02); 
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2); 
+}
+
+/* Image styling within the cart item */
+.cart-item-image {
+    width: 100px; /* Fixed width for the image */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 20px; /* Space between image and text */
+    border-radius: 4px; /* Rounded corners for image */
+}
+
+/* Cart item details styling */
+.cart-item-details {
+    flex: 1; /* Allow details to take up remaining space */
+}
+
+/* Button styling */
+.cart-item button {
+    background-color: #ff3d00; /* Eye-catching color for remove button */
+    color: white; /* White text for contrast */
+    border: none; /* No border */
+    padding: 10px 15px; /* Spacing inside button */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+}
+
+/* Change button color on hover */
+.cart-item button:hover {
+    background-color: #e63900; /* Darker shade on hover */
+}
+
+/* Styling for empty cart message */
+.cart-page-container p {
+    text-align: center; /* Centered text for empty cart message */
+    color: #666; /* Grey color for subtlety */
+    font-size: 18px; /* Larger font for emphasis */
+}
+/* Add this to your existing Cart.css */
+
+/* Styling for quantity controls */
+.quantity-controls {
+    display: flex; /* Use flexbox for layout */
+    align-items: center; /* Center items vertically */
+    margin: 10px 0; /* Space above and below the controls */
+}
+
+/* Button styling for quantity controls */
+.quantity-controls button {
+    background-color: #007bff; /* Bootstrap primary color */
+    color: white; /* White text for contrast */
+    border: none; /* No border */
+    padding: 8px 12px; /* Spacing inside button */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth transition for background color */
+    margin: 0 5px; /* Spacing between buttons */
+}
+
+/* Change button color on hover */
+.quantity-controls button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Ensure images are properly visible */
+.cart-item-image {
+    width: 120px; /* Adjusted width for better visibility */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 20px; /* Space between image and text */
+    border-radius: 4px; /* Rounded corners for image */
+    object-fit: cover; /* Ensures the image fits well within the container */
+}
+
+/* Button styling with Font Awesome icon */
+.remove-button {
+    background-color: #ff3d00;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Space between icon and text */
+    transition: background-color 0.3s ease;
+}
+
+.remove-button i {
+    margin-right: 8px; /* Space between icon and text */
+}
+
+.remove-button:hover {
+    background-color: #e63900; /* Darker shade on hover */
+}
+.cart-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.price-details-card {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    width: 300px; 
+    margin-left: 20px;
+}
+
+.price-details-card h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.price-detail {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.price-detail.total {
+    font-weight: bold;
+    border-top: 2px solid #ddd;
+    padding-top: 10px;
+}
+
+.checkout-button {
+    background-color: #28a745; /* Green for success */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    width: 100%;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 20px;
+}
+
+.checkout-button:hover {
+    background-color: #218838; /* Darker shade on hover */
+}
+
+.price-detail p {
+    margin: 0;
+    color: #05116e; /* Tomato color for emphasis */
+
+}
+
+.free-delivery-message {
+    color: #af1212; /* Tomato color for emphasis */
+    text-align: center;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: bold;
+}
