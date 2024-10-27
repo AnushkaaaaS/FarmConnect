@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
+const { generateToken } = require('./utils/jwtUtils.js');
 
 // Initialize express
 const app = express();
@@ -66,7 +67,8 @@ const farmerSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  
+  subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'FarmerSubscription', default: null },
+
 });
 
 const Farmer = mongoose.model('Farmer', farmerSchema);
@@ -103,11 +105,23 @@ const userSubscriptionSchema = new mongoose.Schema({
 
 const UserSubscription = mongoose.model('UserSubscription', userSubscriptionSchema);
 
+const farmerSubscriptionSchema = new mongoose.Schema({
+  subscriptionType: { type: String, required: true },
+  cardNumber: { type: String, required: true },
+  expiryDate: { type: String, required: true },
+  cvv: { type: String, required: true },
+  farmer: { type: mongoose.Schema.Types.ObjectId, ref: 'Farmer', required: true },
+});
+
+const FarmerSubscription = mongoose.model('FarmerSubscription', farmerSubscriptionSchema);
+
 // Password Validation
 const validatePassword = (password) => {
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
   return passwordRegex.test(password);
 };
+
+
 
 // Buyer Registration Route
 app.post('/api/register', async (req, res) => {
@@ -138,7 +152,11 @@ app.post('/api/register', async (req, res) => {
 
     // Save the buyer to the database
     await newBuyer.save();
-    res.status(201).json({ success: true, message: 'Buyer registered successfully!' });
+    
+    // Generate JWT token
+    const token = generateToken(newBuyer._id);
+
+    res.status(201).json({ success: true, message: 'Buyer registered successfully!', token });
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ success: false, message: 'Error registering buyer' });
@@ -161,16 +179,24 @@ app.get('/api/buyer/:id', async (req, res) => {
 
 app.get('/admin-page', async (req, res) => {
   try {
-      const subscriptions = await UserSubscription.find().populate({
+      const userSubscriptions = await UserSubscription.find().populate({
           path: 'buyer',
           select: 'firstName lastName email' // Select specific fields to show
       });
-      res.status(200).json(subscriptions);
+
+      const farmerSubscriptions = await FarmerSubscription.find().populate({
+          path: 'farmer',
+          select: 'firstName lastName email' // Select specific fields to show
+      });
+
+      res.status(200).json({ userSubscriptions, farmerSubscriptions });
   } catch (error) {
       console.error('Error fetching subscriptions:', error);
       res.status(500).json({ message: 'Error fetching subscriptions' });
   }
 });
+
+
 
 app.post('/api/subscribe', async (req, res) => {
   const { email, subscriptionType, cardNumber, expiryDate, cvv } = req.body;
@@ -181,34 +207,83 @@ app.post('/api/subscribe', async (req, res) => {
   }
 
   try {
+      // Find the buyer by email
+      const buyer = await Buyer.findOne({ email });
+      if (!buyer) {
+          return res.status(404).json({ message: 'Buyer not found' });
+      }
+
+      // Check if the buyer already has an active subscription
+      
+
       // Create a new subscription document
       const newSubscription = new UserSubscription({
           subscriptionType,
           cardNumber,
           expiryDate,
-          cvv
+          cvv,
+          buyer: buyer._id,
       });
 
       // Save the subscription to the database
       const savedSubscription = await newSubscription.save();
 
-      // Find the buyer by email and update their subscription field
-      const updatedBuyer = await Buyer.findOneAndUpdate(
-          { email },
-          { subscription: savedSubscription._id },
-          { new: true }
-      );
+      // Update the buyer's subscription field
+      buyer.subscription = savedSubscription._id;
+      await buyer.save();
 
-      if (!updatedBuyer) {
-          return res.status(404).json({ message: 'Buyer not found' });
-      }
-
-      res.status(201).json({ message: 'Subscription successful!', buyer: updatedBuyer });
+      res.status(201).json({ message: 'Subscription successful!', buyer });
   } catch (error) {
       console.error('Error saving subscription:', error);
       res.status(500).json({ message: 'Failed to save subscription' });
   }
 });
+
+
+app.post('/api/subscribe-farmer', async (req, res) => {
+  const { email, subscriptionType, cardNumber, expiryDate, cvv } = req.body;
+
+  // Validate required fields
+  if (!email || !subscriptionType || !cardNumber || !expiryDate || !cvv) {
+      return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+      // Find the farmer by email
+      const farmer = await Farmer.findOne({ email });
+      if (!farmer) {
+          return res.status(404).json({ message: 'Farmer not found' });
+      }
+
+      // Check if the farmer already has an active subscription
+      if (farmer.subscription!=null) {
+          return res.status(400).json({ message: 'Farmer already has an active subscription' });
+      }
+
+      // Create a new subscription document
+      const newSubscription = new FarmerSubscription({
+          subscriptionType,
+          cardNumber,
+          expiryDate,
+          cvv,
+          farmer: farmer._id,
+      });
+
+      // Save the subscription to the database
+      const savedSubscription = await newSubscription.save();
+
+      // Update the farmer's subscription field
+      farmer.subscription = savedSubscription._id;
+      await farmer.save();
+
+      res.status(201).json({ message: 'Subscription successful!', farmer });
+  } catch (error) {
+      console.error('Error saving subscription:', error);
+      res.status(500).json({ message: 'Failed to save subscription' });
+  }
+});
+
+
 
 
 
@@ -267,37 +342,40 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid email or password' });
     }
 
-    res.json({ success: true, message: 'Login successful!', buyer });
+    // Generate JWT token
+    const token = generateToken(buyer._id);
+
+    res.json({ success: true, message: 'Login successful!', token, buyer });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ success: false, message: 'Error logging in' });
   }
 });
+
 
 // Farmer Login Route
 app.post('/api/farmer-login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Find the farmer by email
-    const farmer = await Farmer.findOne({ email });
-    if (!farmer) {
-      return res.status(400).json({ success: false, message: 'Invalid email or password' });
-    }
+      const farmer = await Farmer.findOne({ email });
+      if (!farmer) {
+          return res.status(400).json({ success: false, message: 'Invalid email or password' });
+      }
 
-    // Check the password
-    const isMatch = await bcrypt.compare(password, farmer.password);
-    if (!isMatch) {
-      return res.status(400).json({ success: false, message: 'Invalid email or password' });
-    }
+      const isMatch = await bcrypt.compare(password, farmer.password);
+      if (!isMatch) {
+          return res.status(400).json({ success: false, message: 'Invalid email or password' });
+      }
 
-    res.json({ success: true, message: 'Login successful!', farmer });
+      // Generate a token after successful login
+      const token = generateToken(farmer._id);
+      res.json({ success: true, message: 'Login successful!', token });
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ success: false, message: 'Error logging in' });
+      console.error('Login error:', error);
+      res.status(500).json({ success: false, message: 'Error logging in' });
   }
 });
-
 
 // POST route for adding a new product (including image upload)
 app.post('/api/products', upload.single('productImage'), async (req, res) => {

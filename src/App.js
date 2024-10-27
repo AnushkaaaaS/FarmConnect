@@ -20,6 +20,7 @@ import BuyerAccountPage from './BuyerAccountPage'; // Import Buyer Account page
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import SubscriptionFormPage from './components/SubscriptionForm';
 import AdminDashboardPage from './components/Admin';
+import SubscriptionFarmerPage from './components/SubscriptionFarmer';
 
 // Create a wrapper component for handling logout and navigation
 const AppRoutes = () => {
@@ -57,6 +58,8 @@ const AppRoutes = () => {
       <Route path="/buyer-login" element={<BuyerLogin />} />
       <Route path="/buyer-register" element={<BuyerRegister />} />
       <Route path="/subscription-form" element={<SubscriptionFormPage />} />
+      <Route path="/subscription-form-farmer" element={<SubscriptionFarmerPage />} />
+
       <Route path="/admin-page" element={<AdminDashboardPage />} />
 
 

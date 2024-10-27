@@ -17,49 +17,49 @@ const FarmerLogin = () => {
 
     // Basic email validation
     if (!/\S+@\S+\.\S+/.test(email)) {
-      setErrorMessage('Invalid email address');
-      return;
+        setErrorMessage('Invalid email address');
+        return;
     }
 
     setErrorMessage('');
     setLoading(true);
 
     try {
-      // Call the correct farmer login API endpoint
-      const response = await fetch('http://localhost:5000/api/farmer-login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+        // Call the correct farmer login API endpoint
+        const response = await fetch('http://localhost:5000/api/farmer-login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        // Show success toast
-        toast.success('Login successful!', { position: "top-center", autoClose: 2000 });
-        console.log('Farmer Login:', data); // Log response data for debugging
+        if (response.ok) {
+            // Show success toast
+            toast.success('Login successful!', { position: "top-center", autoClose: 2000 });
+            console.log('Farmer Login:', data); // Log response data for debugging
 
-        // Store the token in localStorage
-        localStorage.setItem('farmerToken', data.token);
+            // Store the token in localStorage
+            localStorage.setItem('farmerToken', data.token); // Store the JWT token
 
-        // Store farmer info in localStorage (optional)
-        localStorage.setItem('farmer', JSON.stringify(data.farmer));
+            // Store farmer info in localStorage (optional)
+            localStorage.setItem('farmer', JSON.stringify(data.farmer));
 
-        // Redirect to farmer dashboard on successful login
-        navigate('/farmer-dashboard');
-      } else {
-        // If response is not OK, show an error
-        setErrorMessage(data.message || 'Login failed');
-      }
+            // Redirect to farmer dashboard on successful login
+            navigate('/farmer-dashboard');
+        } else {
+            // If response is not OK, show an error
+            setErrorMessage(data.message || 'Login failed');
+        }
     } catch (error) {
-      console.error('Login error:', error); // Log error for debugging
-      setErrorMessage('An error occurred. Please try again.');
+        console.error('Login error:', error); // Log error for debugging
+        setErrorMessage('An error occurred. Please try again.');
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   return (
     <div

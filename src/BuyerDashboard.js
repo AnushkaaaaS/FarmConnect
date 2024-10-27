@@ -1,12 +1,36 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import BuyerNavBar from './BuyerNavBar';
 import './BuyerDashboard.css';
+import SubsSection from './components/SubSection';
 
 const BuyerDashboard = () => {
     const navigate = useNavigate();
     const aboutUsRef = useRef(null);
     const featuredCategoriesRef = useRef(null);
+    const [isSubscribed, setIsSubscribed] = useState(false); // State to hold subscription status
+
+    useEffect(() => {
+        const fetchUserSubscriptionStatus = async () => {
+            try {
+                const response = await fetch('http://localhost:5000/api/user/status', {
+                    method: 'GET',
+                    
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                setIsSubscribed(data.is_subscribed); // Set subscription status based on API response
+            } catch (error) {
+                console.error('Error fetching subscription status:', error);
+            }
+        };
+
+        fetchUserSubscriptionStatus();
+    }, []); // Empty dependency array means this runs once on mount
 
     const handleLogout = () => {
         navigate('/');
@@ -76,24 +100,8 @@ const BuyerDashboard = () => {
                 </div>
             </div>
 
-            <div className="subscription-section">
-                <h2>Choose Your Subscription Plan</h2>
-                <div className="subscription-container">
-                    <div className="subscription-plan">
-                        <span className="offer-label">Exclusive Offer <span className="offer-tag">15% OFF</span></span>
-                        <h3>Weekly Subscription</h3>
-                        <p>Enjoy fresh produce delivered weekly with 15% off for our new members. Get fruits, vegetables, and grains delivered right to your door.</p>
-                        <button className="subscribe-btn" onClick={() =>{navigate("/subscription-form")}}>Get Best Deal →</button>
-                    </div>
-
-                    <div className="subscription-plan">
-                        <span className="offer-label">Regular Offer</span>
-                        <h3>Monthly Subscription</h3>
-                        <p>Stay stocked up for the entire month. Subscribe now and receive 10% cashback on your first month of fresh farm products.</p>
-                        <button className="subscribe-btn" onClick={() => navigate('/subscription-form')}>Shop Now →</button>
-                    </div>
-                </div>
-            </div>
+            {/* Conditionally render the subscription section */}
+            {!isSubscribed && <SubsSection />}
 
             <div className="about-us-section" ref={aboutUsRef}>
                 <div className="about-us-content">

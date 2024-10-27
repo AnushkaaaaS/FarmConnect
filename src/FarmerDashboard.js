@@ -98,7 +98,7 @@ const FarmerDashboard = () => {
                             <li><b>Receive alerts on market trends to make informed decisions.</b></li>
                             <li><b>Gain tools and information that enhance your productivity.</b></li>
                         </ul>
-                        <button className="subscribe-btn">Subscribe Now</button>
+                        <button onClick={()=>{navigate("/subscription-form-farmer")}} className="subscribe-btn">Subscribe Now</button>
                     </div>
                 </div>
             </div>
