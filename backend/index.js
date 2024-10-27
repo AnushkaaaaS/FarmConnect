@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads')); // Serve static files from the 'uploads' directory
 
 //MongoDB connection
-mongoose.connect('mongodb://localhost:27017/farmerswebsite', {
+mongoose.connect('mongodb+srv://farmconnect:farmconnect@cluster0.9nqmz.mongodb.net/farmconnect?retryWrites=true&w=majority&appName=Cluster0', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => console.log('MongoDB connected'))
@@ -56,6 +56,7 @@ const buyerSchema = new mongoose.Schema({
   phoneNumber: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'UserSubscription', default: null },
 });
 
 const Buyer = mongoose.model('Buyer', buyerSchema);
@@ -89,7 +90,18 @@ const productSchema = new mongoose.Schema({
   },
 });
 
+
 const Product = mongoose.model('Product', productSchema);
+
+const userSubscriptionSchema = new mongoose.Schema({
+  subscriptionType: { type: String, required: true },
+  cardNumber: { type: String, required: true },
+  expiryDate: { type: String, required: true },
+  cvv: { type: String, required: true },
+  buyer: { type: mongoose.Schema.Types.ObjectId, ref: 'Buyer', required: true },
+});
+
+const UserSubscription = mongoose.model('UserSubscription', userSubscriptionSchema);
 
 // Password Validation
 const validatePassword = (password) => {
@@ -145,6 +157,59 @@ app.get('/api/buyer/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error fetching buyer details' });
   }
 });
+
+
+app.get('/admin-page', async (req, res) => {
+  try {
+      const subscriptions = await UserSubscription.find().populate({
+          path: 'buyer',
+          select: 'firstName lastName email' // Select specific fields to show
+      });
+      res.status(200).json(subscriptions);
+  } catch (error) {
+      console.error('Error fetching subscriptions:', error);
+      res.status(500).json({ message: 'Error fetching subscriptions' });
+  }
+});
+
+app.post('/api/subscribe', async (req, res) => {
+  const { email, subscriptionType, cardNumber, expiryDate, cvv } = req.body;
+
+  // Validate required fields
+  if (!email || !subscriptionType || !cardNumber || !expiryDate || !cvv) {
+      return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+      // Create a new subscription document
+      const newSubscription = new UserSubscription({
+          subscriptionType,
+          cardNumber,
+          expiryDate,
+          cvv
+      });
+
+      // Save the subscription to the database
+      const savedSubscription = await newSubscription.save();
+
+      // Find the buyer by email and update their subscription field
+      const updatedBuyer = await Buyer.findOneAndUpdate(
+          { email },
+          { subscription: savedSubscription._id },
+          { new: true }
+      );
+
+      if (!updatedBuyer) {
+          return res.status(404).json({ message: 'Buyer not found' });
+      }
+
+      res.status(201).json({ message: 'Subscription successful!', buyer: updatedBuyer });
+  } catch (error) {
+      console.error('Error saving subscription:', error);
+      res.status(500).json({ message: 'Failed to save subscription' });
+  }
+});
+
 
 
 

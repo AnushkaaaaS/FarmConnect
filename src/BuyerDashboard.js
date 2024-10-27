@@ -83,14 +83,14 @@ const BuyerDashboard = () => {
                         <span className="offer-label">Exclusive Offer <span className="offer-tag">15% OFF</span></span>
                         <h3>Weekly Subscription</h3>
                         <p>Enjoy fresh produce delivered weekly with 15% off for our new members. Get fruits, vegetables, and grains delivered right to your door.</p>
-                        <button className="subscribe-btn" onClick={() => alert('Subscription functionality coming soon!')}>Get Best Deal →</button>
+                        <button className="subscribe-btn" onClick={() =>{navigate("/subscription-form")}}>Get Best Deal →</button>
                     </div>
 
                     <div className="subscription-plan">
                         <span className="offer-label">Regular Offer</span>
                         <h3>Monthly Subscription</h3>
                         <p>Stay stocked up for the entire month. Subscribe now and receive 10% cashback on your first month of fresh farm products.</p>
-                        <button className="subscribe-btn" onClick={() => alert('Subscription functionality coming soon!')}>Shop Now →</button>
+                        <button className="subscribe-btn" onClick={() => navigate('/subscription-form')}>Shop Now →</button>
                     </div>
                 </div>
             </div>

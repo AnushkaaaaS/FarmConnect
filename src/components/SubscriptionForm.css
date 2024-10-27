@@ -1,0 +1,104 @@
+.subscription-form-page-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: #f1f1f1;
+    min-height: 100vh; /* Ensure full viewport height */
+    box-sizing: border-box; /* Include padding in height calculations */
+}
+
+.page-title {
+    font-size: 2rem; /* Reduced font size */
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.form-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    width: 100%;
+    max-height: 75vh; /* Reduced max height */
+    overflow-y: auto;
+    font-family: 'Roboto', sans-serif; /* Change font to 'Roboto' for cleaner look */
+    font-size: 0.9rem; /* General smaller font size */
+}
+
+/* Columns Wrapper for Personal and Payment Info */
+.columns-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px; /* Reduced gap between columns */
+}
+
+/* Individual column styling */
+.form-column {
+    flex: 1;
+}
+
+.form-column h2 {
+    font-size: 1.5rem; /* Reduced font size for section headings */
+    margin-bottom: 15px;
+    color: #007b5e;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-size: 0.9rem; /* Reduced label font size */
+    color: #555;
+    margin-bottom: 6px;
+    display: block;
+}
+
+input, select {
+    width: 100%;
+    padding: 8px; /* Reduced padding for inputs */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 0.9rem; /* Smaller input font size */
+}
+
+input:focus, select:focus {
+    border-color: #007b5e;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 94, 0.5);
+}
+
+/* Full width button at the bottom */
+.full-width-button {
+    margin-top: 15px; /* Reduced spacing */
+    text-align: center;
+}
+
+.subscribe-button {
+    width: 50%;
+    padding: 12px; /* Reduced padding */
+    background-color: #007b5e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem; /* Slightly reduced button font size */
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.subscribe-button:hover {
+    background-color: #005a40;
+}
+
+@media screen and (max-width: 768px) {
+    .columns-wrapper {
+        flex-direction: column;
+    }
+
+    .subscribe-button {
+        width: 100%;
+    }
+}

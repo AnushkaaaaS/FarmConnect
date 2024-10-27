@@ -18,6 +18,8 @@ import YourProductsPage from './YourProductsPage'; // Import the new component
 import FarmerAccountPage from './FarmerAccountPage'; // Import the account page
 import BuyerAccountPage from './BuyerAccountPage'; // Import Buyer Account page
 import '@fortawesome/fontawesome-free/css/all.min.css';
+import SubscriptionFormPage from './components/SubscriptionForm';
+import AdminDashboardPage from './components/Admin';
 
 // Create a wrapper component for handling logout and navigation
 const AppRoutes = () => {
@@ -54,6 +56,9 @@ const AppRoutes = () => {
       <Route path="/farmer-register" element={<FarmerRegister />} />
       <Route path="/buyer-login" element={<BuyerLogin />} />
       <Route path="/buyer-register" element={<BuyerRegister />} />
+      <Route path="/subscription-form" element={<SubscriptionFormPage />} />
+      <Route path="/admin-page" element={<AdminDashboardPage />} />
+
 
       {/* Protected routes for Farmer Dashboard and Pages */}
       <Route path="/farmer-dashboard" element={<ProtectedRoute><FarmerDashboard /></ProtectedRoute>} />
