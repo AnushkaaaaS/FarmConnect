@@ -8,29 +8,39 @@ const BuyerDashboard = () => {
     const navigate = useNavigate();
     const aboutUsRef = useRef(null);
     const featuredCategoriesRef = useRef(null);
-    const [isSubscribed, setIsSubscribed] = useState(false); // State to hold subscription status
+    const [isSubscribed, setIsSubscribed] = useState(false);
 
     useEffect(() => {
         const fetchUserSubscriptionStatus = async () => {
             try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('No token found');
+                    return;
+                }
+        
                 const response = await fetch('http://localhost:5000/api/user/status', {
                     method: 'GET',
-                    
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
                 });
-
+        
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    const errorData = await response.json();
+                    console.error('Error response:', errorData);
+                    throw new Error(errorData.message || 'Network response was not ok');
                 }
-
+        
                 const data = await response.json();
-                setIsSubscribed(data.is_subscribed); // Set subscription status based on API response
+                setIsSubscribed(data.is_subscribed);
             } catch (error) {
                 console.error('Error fetching subscription status:', error);
             }
         };
 
         fetchUserSubscriptionStatus();
-    }, []); // Empty dependency array means this runs once on mount
+    }, []);
 
     const handleLogout = () => {
         navigate('/');
@@ -41,7 +51,7 @@ const BuyerDashboard = () => {
     };
 
     const handleAccount = () => {
-        navigate('/account'); // Show buyer's account details
+        navigate('/account');
     };
 
     const handleCategoryClick = (category) => {
@@ -76,8 +86,8 @@ const BuyerDashboard = () => {
 
             <div className="hero-section">
                 <div className="hero-content">
-                    <h1>From Farms to Your Doorstep, Fresh and Direct</h1>
-                    <p>Your Marketplace for Farm-Fresh Goods. Shop Farm-Fresh Fruits, Vegetables & More</p>
+                    <h1>From Farms to Your Doorstep, Fresh and Direct!</h1>
+                    <p>Your Marketplace for Farm-Fresh Goods. Shop Farm-Fresh Fruits, Vegetables & More.</p>
                     <button className="shop-now-btn" onClick={handleShopNowClick}>Shop Now</button>
                 </div>
             </div>
@@ -100,8 +110,19 @@ const BuyerDashboard = () => {
                 </div>
             </div>
 
-            {/* Conditionally render the subscription section */}
-            {!isSubscribed && <SubsSection />}
+            {!isSubscribed ? (
+                <SubsSection/>
+            ) : (
+                <div className="subscription-benefits">
+                    <h2>You are Subscribed!</h2>
+                    <p>Thank you for being a valued subscriber! Here are some benefits you enjoy:</p>
+                    <ul>
+                        <li>Free delivery on all orders</li>
+                        <li>Exclusive access to special discounts and promotions</li>
+                        <li>Priority customer support</li>
+                    </ul>
+                </div>
+            )}
 
             <div className="about-us-section" ref={aboutUsRef}>
                 <div className="about-us-content">
@@ -124,7 +145,7 @@ const BuyerDashboard = () => {
                         </div>
                     </div>
                     <div className="stat-item">
-                        <p>Produce Quality Rating </p>
+                        <p>Produce Quality Rating</p>
                         <div className="progress-bar">
                             <div className="progress" style={{ width: "90%" }}></div>
                         </div>

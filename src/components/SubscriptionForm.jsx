@@ -1,23 +1,45 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import './SubscriptionForm.css';
 
 function SubscriptionFormPage() {
-    const [email, setEmail] = useState(""); // New email state
+    const [email, setEmail] = useState("");
     const [subscriptionType, setSubscriptionType] = useState("");
     const [cardNumber, setCardNumber] = useState("");
     const [expiryDate, setExpiryDate] = useState("");
     const [cvv, setCvv] = useState("");
+    const [loading, setLoading] = useState(false); // New loading state
     const navigate = useNavigate();
+
+    const validateInput = () => {
+        // Simple validations
+        if (!/^\d{16}$/.test(cardNumber)) {
+            alert('Card number must be 16 digits.');
+            return false;
+        }
+        if (!/^\d{3}$/.test(cvv)) {
+            alert('CVV must be 3 digits.');
+            return false;
+        }
+        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
+            alert('Expiry date must be in MM/YY format.');
+            return false;
+        }
+        return true;
+    };
 
     // Function to handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
-        
+
+        // Validate input
+        if (!validateInput()) {
+            return;
+        }
+
         // Data to be sent to the backend
         const formData = {
-            email, // include email here
+            email,
             subscriptionType,
             cardNumber,
             expiryDate,
@@ -25,22 +47,31 @@ function SubscriptionFormPage() {
         };
 
         try {
-            console.log(formData);
+            // Set loading state
+            setLoading(true);
+            const token = localStorage.getItem('token');
+
             const response = await fetch('http://localhost:5000/api/subscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(formData),
             });
+
+            setLoading(false); // Reset loading state
 
             if (response.ok) {
                 alert('Subscription successful!');
                 navigate("/buyer-dashboard");
             } else {
-                alert('Subscription failed. Please try again.');
+                const errorData = await response.json();
+                console.error('Error data:', errorData); // Log error data for debugging
+                alert(`Subscription failed: ${errorData.message}`);
             }
         } catch (error) {
+            setLoading(false); // Reset loading state
             console.error('Error submitting form:', error);
             alert('An error occurred. Please try again.');
         }
@@ -114,8 +145,8 @@ function SubscriptionFormPage() {
                             </div>
 
                             <div className="form-group full-width-button">
-                                <button type="submit" className="subscribe-button">
-                                    Subscribe Now
+                                <button type="submit" className="subscribe-button" disabled={loading}>
+                                    {loading ? 'Subscribing...' : 'Subscribe Now'}
                                 </button>
                             </div>
                         </form>

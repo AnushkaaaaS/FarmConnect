@@ -4,9 +4,10 @@ const jwt = require('jsonwebtoken');
 const secretKey = 'farmconnect'; // Replace with your own secret key
 
 // Generate a JWT token
-const generateToken = (userId) => {
-    return jwt.sign({ id: userId }, secretKey, { expiresIn: '1h' });
+const generateToken = (buyerId) => {
+    return jwt.sign({ buyerId }, secretKey, { expiresIn: '1h' });
 };
+
 
 // Middleware to verify token
 const authenticateToken = (req, res, next) => {

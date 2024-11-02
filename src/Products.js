@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './Products.css'; // CSS for styling the products page
@@ -12,6 +11,7 @@ const Products = () => {
     const { category } = useParams(); // Get the category from URL
     const [products, setProducts] = useState([]); // Load products based on category
     const [selectedProduct, setSelectedProduct] = useState(null); // State to manage selected product for farmer details
+    const [quantities, setQuantities] = useState({}); // State to manage selected quantities for products
     const navigate = useNavigate(); // Hook for navigation
 
     // Fetch products from the API when the component mounts
@@ -34,31 +34,55 @@ const Products = () => {
         setSelectedProduct((prevProductId) => (prevProductId === productId ? null : productId));
     };
 
-   // Function to handle Add to Cart action
-const addToCart = (product) => {
-    const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-    const existingItem = cartItems.find(item => item._id === product._id);
+    // Function to handle Add to Cart action
+    const addToCart = async (product) => {
+        const selectedQuantity = quantities[product._id] || 0; // Get the selected quantity
 
-    if (existingItem) {
-        // If the item already exists in the cart, increment the quantity
-        existingItem.quantity += 1;
-    } else {
-        // If it's a new item, add it to the cart
-        cartItems.push({ ...product, quantity: 1 });
-    }
+        if (selectedQuantity <= 0) {
+            toast.error("Please select a quantity!");
+            return;
+        }
 
-    localStorage.setItem('cartItems', JSON.stringify(cartItems)); // Update localStorage
-    toast.success(`${product.name} has been added to your cart!`, {
-        position: 'top-right',
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-    });
-};
+        try {
+            const response = await fetch('http://localhost:5000/api/cart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}` // Assuming you store the JWT token in localStorage
+                },
+                body: JSON.stringify({
+                    productId: product._id,
+                    quantity: selectedQuantity
+                })
+            });
 
+            const data = await response.json();
+            if (data.success) {
+                toast.success(`${product.name} has been added to your cart!`, {
+                    position: 'top-right',
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
+            } else {
+                toast.error(data.message);
+            }
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            toast.error("An error occurred while adding to cart.");
+        }
+    };
+
+    // Handle quantity change
+    const handleQuantityChange = (productId, value) => {
+        setQuantities((prev) => ({
+            ...prev,
+            [productId]: parseInt(value, 10)
+        }));
+    };
 
     return (
         <>
@@ -89,7 +113,11 @@ const addToCart = (product) => {
                                         <h3>{product.name}</h3>
 
                                         {/* Displaying quantity options with unit */}
-                                        <select className="product-options">
+                                        <select 
+                                            className="product-options" 
+                                            value={quantities[product._id] || ''} 
+                                            onChange={(e) => handleQuantityChange(product._id, e.target.value)}
+                                        >
                                             <option value="">Select Quantity</option>
                                             {[...Array(product.quantity)].map((_, index) => (
                                                 <option key={index} value={index + 1}>

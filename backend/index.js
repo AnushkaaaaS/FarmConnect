@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
-const { generateToken } = require('./utils/jwtUtils.js');
+const { generateToken, authenticateToken } = require('./utils/jwtUtils.js');
 
 // Initialize express
 const app = express();
@@ -196,9 +196,30 @@ app.get('/admin-page', async (req, res) => {
   }
 });
 
+app.get('/api/user/status', authenticateToken, async (req, res) => {
+  try {
+      const buyerId = req.user.buyerId; // Ensure you're getting the ID from the token
+      console.log('Fetching subscription status for buyer ID:', buyerId); // Debug log
+
+      const buyer = await Buyer.findById(buyerId).populate('subscription');
+
+      if (!buyer) {
+          return res.status(404).json({ message: 'User not found.' });
+      }
+
+      console.log('Buyer found:', buyer); // Log the found buyer
+
+      const isSubscribed = buyer.subscription !== null; // Assuming null means no subscription
+
+      res.status(200).json({ is_subscribed: isSubscribed });
+  } catch (error) {
+      console.error('Error fetching subscription status:', error);
+      res.status(500).json({ message: 'Internal server error.' });
+  }
+});
 
 
-app.post('/api/subscribe', async (req, res) => {
+app.post('/api/subscribe', authenticateToken, async (req, res) => {
   const { email, subscriptionType, cardNumber, expiryDate, cvv } = req.body;
 
   // Validate required fields
@@ -213,8 +234,10 @@ app.post('/api/subscribe', async (req, res) => {
           return res.status(404).json({ message: 'Buyer not found' });
       }
 
-      // Check if the buyer already has an active subscription
-      
+      // Check if the buyer already has a subscription
+      if (buyer.subscription) {
+          return res.status(400).json({ message: 'You can only subscribe once.' });
+      }
 
       // Create a new subscription document
       const newSubscription = new UserSubscription({
@@ -539,26 +562,46 @@ app.get('/api/farmer-details', async (req, res) => {
   }
 });
 
+
 const cartItemSchema = new mongoose.Schema({
-  productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
-  quantity: { type: Number, required: true },
-  buyerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Buyer', required: true },
-});
+  productId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Product',
+    required: true,
+  },
+  quantity: {
+    type: Number,
+    required: true,
+    min: [1, 'Quantity must be at least 1'], // Ensure quantity is at least 1
+    default: 1, // Default quantity is 1
+  },
+  buyerId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Buyer',
+    required: true,
+  },
+}, { timestamps: true }); // Enable timestamps for createdAt and updatedAt
 
 const CartItem = mongoose.model('CartItem', cartItemSchema);
 
+
 // Add item to cart or update the quantity if it exists
-app.post('/api/cart', async (req, res) => {
-  const { productId, quantity, buyerId } = req.body;
+app.post('/api/cart', authenticateToken, async (req, res) => {
+  const { productId, quantity } = req.body;
+
+  // Validate input
+  if (!productId || quantity === undefined) {
+    return res.status(400).json({ success: false, message: 'Product ID and quantity are required' });
+  }
+
+  const buyerId = req.user.buyerId;
 
   try {
-    // Check if the product exists in the inventory
     const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ success: false, message: 'Product not found' });
     }
 
-    // Validate that the requested quantity is positive and doesn't exceed available stock
     if (quantity <= 0) {
       return res.status(400).json({ success: false, message: 'Quantity must be greater than zero' });
     }
@@ -567,40 +610,51 @@ app.post('/api/cart', async (req, res) => {
       return res.status(400).json({ success: false, message: `Only ${product.quantity} units are available for this product` });
     }
 
-    // Check if the cart already has the product
     const existingCartItem = await CartItem.findOne({ productId, buyerId });
 
     if (existingCartItem) {
-      const newQuantity = existingCartItem.quantity + quantity;
+      // Directly set the quantity to the new value
+      existingCartItem.quantity = quantity;
 
-      // Validate new total quantity
-      if (newQuantity > product.quantity) {
+      // Check if the updated quantity exceeds available stock
+      if (existingCartItem.quantity > product.quantity) {
         return res.status(400).json({ success: false, message: `Cannot add more than ${product.quantity} units to the cart` });
       }
 
-      existingCartItem.quantity = newQuantity; // Update the cart item with new quantity
       await existingCartItem.save();
-      res.json({ success: true, message: 'Cart updated with new quantity' });
+      return res.json({ success: true, message: 'Cart updated with new quantity', cartItem: existingCartItem });
     } else {
-      // Create a new cart item if it doesn't exist
+      // If the item doesn't exist in the cart, create a new cart item
       const newCartItem = new CartItem({ productId, quantity, buyerId });
       await newCartItem.save();
-      res.status(201).json({ success: true, message: 'Product added to cart' });
+      return res.status(201).json({ success: true, message: 'Product added to cart', cartItem: newCartItem });
     }
   } catch (error) {
     console.error('Error adding to cart:', error);
-    res.status(500).json({ success: false, message: 'Error adding item to cart' });
+    return res.status(500).json({ success: false, message: 'Error adding item to cart' });
   }
 });
 
+
+
 // Get cart items for a buyer
-app.get('/api/cart/:buyerId', async (req, res) => {
+app.get('/api/cart', authenticateToken, async (req, res) => {
+  const buyerId = req.user.buyerId; // Extract buyerId from the token
+
   try {
-    const cartItems = await CartItem.find({ buyerId: req.params.buyerId }).populate('productId');
-    if (!cartItems || cartItems.length === 0) {
+    // Fetch cart items for the authenticated buyer and populate the product details
+    const cartItems = await CartItem.find({ buyerId })
+      .populate({
+        path: 'productId', // Populate the product details
+        select: 'name price imageUrl unit quantity', // Select only the fields you need
+      });
+
+    // Check if cartItems is an array and not empty
+    if (!Array.isArray(cartItems) || cartItems.length === 0) {
       return res.status(404).json({ success: false, message: 'No items in cart' });
     }
 
+    // Return the cart items
     res.json({ success: true, cartItems });
   } catch (error) {
     console.error('Error fetching cart items:', error);
@@ -608,21 +662,31 @@ app.get('/api/cart/:buyerId', async (req, res) => {
   }
 });
 
-// Remove item from cart
-app.delete('/api/cart/:id', async (req, res) => {
-  try {
-    const deletedCartItem = await CartItem.findByIdAndDelete(req.params.id);
 
-    if (!deletedCartItem) {
-      return res.status(404).json({ success: false, message: 'Cart item not found' });
+// Remove item from cart
+app.delete('/api/cart/:id', authenticateToken, async (req, res) => {
+  const buyerId = req.user.buyerId;
+  const itemId = req.params.id;
+
+  console.log(`Attempting to remove item ${itemId} for buyer ${buyerId}`);
+
+  try {
+    const cartItem = await CartItem.findOne({ _id: itemId, buyerId }); // This correctly checks for the cart item ID
+    if (!cartItem) {
+      console.error(`Item ${itemId} not found for buyer ${buyerId}`);
+      return res.status(404).json({ success: false, message: 'Cart item not found or unauthorized' });
     }
 
-    res.json({ success: true, message: 'Item removed from cart' });
+    await cartItem.deleteOne(); // Use deleteOne() instead of remove()
+    console.log(`Item ${itemId} successfully removed from cart for buyer ${buyerId}`);
+    res.json({ success: true, message: 'Item removed from cart', item: cartItem });
   } catch (error) {
     console.error('Error removing cart item:', error);
     res.status(500).json({ success: false, message: 'Error removing item from cart' });
   }
 });
+
+
 
 // Start the server
 const PORT = process.env.PORT || 5000;

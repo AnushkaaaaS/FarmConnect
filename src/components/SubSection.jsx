@@ -1,17 +1,17 @@
 // SubsSection.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import subscriptionimage from "./subscription-image.png"
 
-import PropTypes from 'prop-types'; // Optional, for type checking
 
-const SubsSection = ({ subscriptionImage, handleOnClick }) => {
+const SubsSection = ({ handleOnClick }) => {
 
     const navigate = useNavigate()
     return (
         <div className="subscription-section">
             <div className="subscription-content">
                 <div className="subscription-image">
-                    <img src={subscriptionImage} alt="Subscription Benefits" />
+                <img src={subscriptionimage} alt="Subscription Benefits" />
                 </div>
                 <div className="subscription-text">
                     <h2>Join Our Subscription Plan</h2>
