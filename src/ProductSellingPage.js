@@ -1,18 +1,20 @@
-
 import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import './ProductSellingPage.css';
 
 function ProductSellingPage() {
-  const [productName, setProductName] = useState("");
-  const [description, setDescription] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [unit, setUnit] = useState(""); // New field for kg/dozen
+  const location = useLocation();
+  const editingProduct = location.state?.product || null;
+
+  const [productName, setProductName] = useState(editingProduct?.name || "");
+  const [description, setDescription] = useState(editingProduct?.description || "");
+  const [price, setPrice] = useState(editingProduct?.price || "");
+  const [category, setCategory] = useState(editingProduct?.category || "");
+  const [quantity, setQuantity] = useState(editingProduct?.quantity || "");
+  const [unit, setUnit] = useState(editingProduct?.unit || "");
   const [imageFile, setImageFile] = useState(null);
-  
-  // State for farmer details
-  const [farmerDetails, setFarmerDetails] = useState({
+  const [imagePreview, setImagePreview] = useState(editingProduct?.imageUrl || ""); // Initialize with existing image if editing
+  const [farmerDetails, setFarmerDetails] = useState(editingProduct?.farmerDetails || {
     farmerName: "",
     location: "",
     totalArea: "",
@@ -22,7 +24,13 @@ function ProductSellingPage() {
   });
 
   const handleImageUpload = (e) => {
-    setImageFile(e.target.files[0]);  // Store image file
+    const file = e.target.files[0];
+    setImageFile(file);
+    // Create a URL for the image file for preview
+    if (file) {
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
   };
 
   const handleFarmerDetailsChange = (e) => {
@@ -34,170 +42,118 @@ function ProductSellingPage() {
     e.preventDefault();
 
     const formData = new FormData();
+    if (editingProduct) formData.append("id", editingProduct._id);
     formData.append("name", productName);
     formData.append("description", description);
     formData.append("price", price);
     formData.append("category", category);
     formData.append("quantity", quantity);
-    formData.append("unit", unit);  // Append unit (kg or dozen)
-    formData.append("productImage", imageFile);  // Append image file
-    formData.append("farmerDetails", JSON.stringify(farmerDetails)); // Append farmer details as string
+    formData.append("unit", unit);
+    formData.append("productImage", imageFile);
+    formData.append("farmerDetails", JSON.stringify(farmerDetails));
 
     try {
       const response = await fetch("http://localhost:5000/api/products", {
         method: "POST",
-        body: formData,  // Send form data
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+        body: formData,
       });
+
       const data = await response.json();
-      if (data.success) {
-        alert("Product added successfully!");
-      } else {
-        alert("Failed to add product.");
-      }
+      alert(data.success ? (editingProduct ? "Product updated successfully!" : "Product added successfully!") : `Failed to process product: ${data.message}`);
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.error("Error processing product:", error);
+      alert(`An error occurred: ${error.message}`);
     }
   };
 
   return (
     <div className="product-selling-page-container">
-      <div className="form-container">
-        <form className="product-selling-form" onSubmit={handleSubmit}>
-          <h2>Sell Your Product</h2>
+      <div className="product-selling-form">
+        <form onSubmit={handleSubmit}>
+          <h2>{editingProduct ? "Edit Your Product" : "Sell Your Product"}</h2>
 
-          <label>Product Name:</label>
-          <input
-            type="text"
-            placeholder="Enter product name"
-            value={productName}
-            onChange={(e) => setProductName(e.target.value)}
-            required
-          />
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Product Name:</label>
+              <input type="text" value={productName} onChange={(e) => setProductName(e.target.value)} required />
+            </div>
 
-          <label>Description:</label>
-          <textarea
-            placeholder="Enter product description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            required
-          />
+            <div className="form-group">
+              <label>Description:</label>
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} required />
+            </div>
 
-          <label>Price (in ₹):</label>
-          <input
-            type="number"
-            placeholder="Enter product price"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            required
-          />
+            <div className="form-group">
+              <label>Price (₹):</label>
+              <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
+            </div>
 
-          <label>Category:</label>
-          <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            required
-          >
-            <option value="">Select Category</option>
-            <option value="fruits">Fruits</option>
-            <option value="vegetables">Vegetables</option>
-            <option value="grains">Grains</option>
-          </select>
+            <div className="form-group">
+              <label>Category:</label>
+              <input type="text" value={category} onChange={(e) => setCategory(e.target.value)} required />
+            </div>
 
-          <label>Quantity:</label>
-          <input
-            type="number"
-            placeholder="Enter available quantity"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-            required
-          />
+            <div className="form-group">
+              <label>Quantity:</label>
+              <input type="number" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
+            </div>
 
-          <label>Unit:</label>
-          <select
-            value={unit}
-            onChange={(e) => setUnit(e.target.value)}
-            required
-          >
-            <option value="">Select Unit</option>
-            <option value="kg">Kilogram (kg)</option>
-            <option value="dozen">Dozen</option>
-          </select>
+            <div className="form-group">
+              <label>Unit:</label>
+              <input type="text" value={unit} onChange={(e) => setUnit(e.target.value)} required />
+            </div>
 
-          <label>Upload Product Image:</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            required
-          />
+            <div className="form-group">
+              <label>Product Image:</label>
+              <input type="file" accept="image/*" onChange={handleImageUpload} />
+              {imagePreview && (
+                <div className="image-preview">
+                  <img src={imagePreview} alt="Preview" />
+                </div>
+              )}
+            </div>
+          </div>
 
-          <button type="submit" className="submit-button">
-            Submit Product
-          </button>
-        </form>
+          {/* Farmer Details Section */}
+          <div className="farmer-details-section">
+            <h3>Farmer Details</h3>
+            <div className="form-grid">
+              <div className="form-group">
+                <label>Farmer Name:</label>
+                <input type="text" name="farmerName" value={farmerDetails.farmerName} onChange={handleFarmerDetailsChange} required />
+              </div>
 
-        <form className="farmer-details-form">
-          <h2>Farmer Details</h2>
+              <div className="form-group">
+                <label>Location:</label>
+                <input type="text" name="location" value={farmerDetails.location} onChange={handleFarmerDetailsChange} required />
+              </div>
 
-          <label>Farmer Name:</label>
-          <input
-            type="text"
-            name="farmerName"
-            placeholder="Enter farmer name"
-            value={farmerDetails.farmerName}
-            onChange={handleFarmerDetailsChange}
-            required
-          />
+              <div className="form-group">
+                <label>Total Area (in acres):</label>
+                <input type="number" name="totalArea" value={farmerDetails.totalArea} onChange={handleFarmerDetailsChange} required />
+              </div>
 
-          <label>Location:</label>
-          <input
-            type="text"
-            name="location"
-            placeholder="Enter location"
-            value={farmerDetails.location}
-            onChange={handleFarmerDetailsChange}
-            required
-          />
+              <div className="form-group">
+                <label>Area Under Cultivation (in acres):</label>
+                <input type="number" name="areaUnderCultivation" value={farmerDetails.areaUnderCultivation} onChange={handleFarmerDetailsChange} required />
+              </div>
 
-          <label>Total Area:</label>
-          <input
-            type="text"
-            name="totalArea"
-            placeholder="Enter total area"
-            value={farmerDetails.totalArea}
-            onChange={handleFarmerDetailsChange}
-            required
-          />
+              <div className="form-group">
+                <label>Crop Cycle:</label>
+                <input type="text" name="cropCycle" value={farmerDetails.cropCycle} onChange={handleFarmerDetailsChange} required />
+              </div>
 
-          <label>Area Under Cultivation:</label>
-          <input
-            type="text"
-            name="areaUnderCultivation"
-            placeholder="Enter area under cultivation"
-            value={farmerDetails.areaUnderCultivation}
-            onChange={handleFarmerDetailsChange}
-            required
-          />
+              <div className="form-group">
+                <label>Agriculture Method:</label>
+                <input type="text" name="agricultureMethod" value={farmerDetails.agricultureMethod} onChange={handleFarmerDetailsChange} required />
+              </div>
+            </div>
+          </div>
 
-          <label>Crop Cycle:</label>
-          <input
-            type="text"
-            name="cropCycle"
-            placeholder="Enter crop cycle"
-            value={farmerDetails.cropCycle}
-            onChange={handleFarmerDetailsChange}
-            required
-          />
-
-          <label>Agriculture Method:</label>
-          <input
-            type="text"
-            name="agricultureMethod"
-            placeholder="Enter agriculture method"
-            value={farmerDetails.agricultureMethod}
-            onChange={handleFarmerDetailsChange}
-            required
-          />
+          <button type="submit" className="submit-button">{editingProduct ? "Update Product" : "Submit Product"}</button>
         </form>
       </div>
     </div>

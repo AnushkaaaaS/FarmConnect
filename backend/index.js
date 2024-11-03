@@ -6,6 +6,8 @@ const cors = require('cors');
 const multer = require('multer');
 const path = require('path');
 const { generateToken, authenticateToken } = require('./utils/jwtUtils.js');
+const { userOnly, farmerOnly } = require('./utils/roleMiddleware.js');
+const { generateFarmerToken } = require('./utils/jwtUtilsFarmer.js');
 
 // Initialize express
 const app = express();
@@ -82,6 +84,7 @@ const productSchema = new mongoose.Schema({
   category: { type: String, required: true },
   quantity: { type: Number, required: true },
   imageUrl: { type: String, required: true },
+  farmerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Farmer', required: true }, // New field
   farmerDetails: {
     farmerName: { type: String, required: true },
     location: { type: String, required: true },
@@ -91,6 +94,8 @@ const productSchema = new mongoose.Schema({
     agricultureMethod: { type: String, required: true },
   },
 });
+
+
 
 
 const Product = mongoose.model('Product', productSchema);
@@ -196,7 +201,7 @@ app.get('/admin-page', async (req, res) => {
   }
 });
 
-app.get('/api/user/status', authenticateToken, async (req, res) => {
+app.get('/api/user/status', userOnly, async (req, res) => {
   try {
       const buyerId = req.user.buyerId; // Ensure you're getting the ID from the token
       console.log('Fetching subscription status for buyer ID:', buyerId); // Debug log
@@ -219,17 +224,20 @@ app.get('/api/user/status', authenticateToken, async (req, res) => {
 });
 
 
-app.post('/api/subscribe', authenticateToken, async (req, res) => {
-  const { email, subscriptionType, cardNumber, expiryDate, cvv } = req.body;
+
+app.post('/api/subscribe', userOnly, async (req, res) => {
+  const { subscriptionType, cardNumber, expiryDate, cvv } = req.body;
 
   // Validate required fields
-  if (!email || !subscriptionType || !cardNumber || !expiryDate || !cvv) {
+  if (!subscriptionType || !cardNumber || !expiryDate || !cvv) {
       return res.status(400).json({ message: 'All fields are required' });
   }
 
+  const buyerId = req.user.buyerId; // Extract buyer ID from the token
+
   try {
-      // Find the buyer by email
-      const buyer = await Buyer.findOne({ email });
+      // Find the buyer by ID
+      const buyer = await Buyer.findById(buyerId).populate('subscription');
       if (!buyer) {
           return res.status(404).json({ message: 'Buyer not found' });
       }
@@ -261,6 +269,7 @@ app.post('/api/subscribe', authenticateToken, async (req, res) => {
       res.status(500).json({ message: 'Failed to save subscription' });
   }
 });
+
 
 
 app.post('/api/subscribe-farmer', async (req, res) => {
@@ -365,8 +374,8 @@ app.post('/api/login', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Invalid email or password' });
     }
 
-    // Generate JWT token
-    const token = generateToken(buyer._id);
+    // Generate JWT token with role
+    const token = generateToken(buyer._id, 'buyer'); // Include the role 'buyer'
 
     res.json({ success: true, message: 'Login successful!', token, buyer });
   } catch (error) {
@@ -419,36 +428,100 @@ app.post('/api/farmer-login', async (req, res) => {
       }
 
       // Generate a token after successful login
-      const token = generateToken(farmer._id);
-      res.json({ success: true, message: 'Login successful!', token });
+      const token = generateFarmerToken(farmer._id,'farmer');
+      res.json({ success: true, message: 'Login successful!', token
+       });
   } catch (error) {
       console.error('Login error:', error);
       res.status(500).json({ success: false, message: 'Error logging in' });
   }
 });
 
-// POST route for adding a new product (including image upload)
-app.post('/api/products', upload.single('productImage'), async (req, res) => {
-  const { name, description, price, unit, category, quantity, farmerDetails } = req.body;
-  const imageUrl = req.file.path; // Get the image file path from multer
+
+app.post('/api/products', farmerOnly, upload.single('productImage'), async (req, res) => {
+  const { id, name, description, price, unit, category, quantity, farmerDetails } = req.body;
+  const imageUrl = req.file ? req.file.path : null;
+
+  if (!name || !description || !price || !unit || !category || !quantity) {
+      return res.status(400).json({ success: false, message: 'All fields are required' });
+  }
 
   try {
-    const newProduct = new Product({
-      name,
-      description,
-      price,
-      unit,
-      category,
-      quantity,
-      imageUrl,
-      farmerDetails: JSON.parse(farmerDetails), // Parse farmerDetails from string
-    });
-    await newProduct.save();
-    res.status(201).json({ success: true, message: 'Product added successfully' });
+      const farmer = await Farmer.findById(req.user.farmerId);
+      if (!farmer) return res.status(403).json({ success: false, message: 'Unauthorized access.' });
+
+      let product;
+      if (id) {
+          // Update existing product
+          product = await Product.findByIdAndUpdate(
+              id,
+              {
+                  name,
+                  description,
+                  price,
+                  unit,
+                  category,
+                  quantity,
+                  imageUrl: imageUrl || product.imageUrl,
+                  farmerDetails: farmerDetails ? JSON.parse(farmerDetails) : {},
+                  farmerId: farmer._id,
+              },
+              { new: true }
+          );
+          res.status(200).json({ success: true, message: 'Product updated successfully', product });
+      } else {
+          // Create new product
+          product = new Product({
+              name,
+              description,
+              price,
+              unit,
+              category,
+              quantity,
+              imageUrl,
+              farmerDetails: farmerDetails ? JSON.parse(farmerDetails) : {},
+              farmerId: farmer._id,
+          });
+          await product.save();
+          res.status(201).json({ success: true, message: 'Product added successfully', product });
+      }
   } catch (error) {
-    res.status(500).json({ success: false, message: 'Error adding product', error });
+      console.error('Error processing product:', error);
+      res.status(500).json({ success: false, message: 'Error processing product', error: error.message || 'Internal Server Error' });
   }
 });
+
+
+
+app.get('/api/your-products', farmerOnly, async (req, res) => {
+  try {
+    const products = await Product.find({ farmerId: req.user.farmerId }); // Fetch products by farmer ID
+    res.status(200).json(products);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching products', error });
+  }
+});
+
+
+app.delete('/api/products/:id', farmerOnly, async (req, res) => {
+  const { id } = req.params; // Get the product ID from the request parameters
+
+  try {
+    // Find the product by ID and ensure it belongs to the authenticated farmer
+    const product = await Product.findOne({ _id: id, farmerId: req.user.farmerId });
+    
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found or you are not authorized to delete this product' });
+    }
+
+    await product.deleteOne(); // Delete the product
+    res.status(200).json({ message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting product', error });
+  }
+});
+
+
 
 // GET route for retrieving products by category
 app.get('/api/products', async (req, res) => {
@@ -586,7 +659,8 @@ const CartItem = mongoose.model('CartItem', cartItemSchema);
 
 
 // Add item to cart or update the quantity if it exists
-app.post('/api/cart', authenticateToken, async (req, res) => {
+// Add item to cart
+app.post('/api/cart', userOnly, async (req, res) => {
   const { productId, quantity } = req.body;
 
   // Validate input
@@ -594,7 +668,7 @@ app.post('/api/cart', authenticateToken, async (req, res) => {
     return res.status(400).json({ success: false, message: 'Product ID and quantity are required' });
   }
 
-  const buyerId = req.user.buyerId;
+  const buyerId = req.user.buyerId; // Extract buyerId from the token
 
   try {
     const product = await Product.findById(productId);
@@ -613,7 +687,7 @@ app.post('/api/cart', authenticateToken, async (req, res) => {
     const existingCartItem = await CartItem.findOne({ productId, buyerId });
 
     if (existingCartItem) {
-      // Directly set the quantity to the new value
+      // Update the quantity of the existing cart item
       existingCartItem.quantity = quantity;
 
       // Check if the updated quantity exceeds available stock
@@ -635,19 +709,16 @@ app.post('/api/cart', authenticateToken, async (req, res) => {
   }
 });
 
-
-
 // Get cart items for a buyer
-app.get('/api/cart', authenticateToken, async (req, res) => {
+app.get('/api/cart', userOnly, async (req, res) => {
   const buyerId = req.user.buyerId; // Extract buyerId from the token
 
   try {
     // Fetch cart items for the authenticated buyer and populate the product details
-    const cartItems = await CartItem.find({ buyerId })
-      .populate({
-        path: 'productId', // Populate the product details
-        select: 'name price imageUrl unit quantity', // Select only the fields you need
-      });
+    const cartItems = await CartItem.find({ buyerId }).populate({
+      path: 'productId', // Populate the product details
+      select: 'name price imageUrl unit quantity', // Select only the fields you need
+    });
 
     // Check if cartItems is an array and not empty
     if (!Array.isArray(cartItems) || cartItems.length === 0) {
@@ -662,29 +733,25 @@ app.get('/api/cart', authenticateToken, async (req, res) => {
   }
 });
 
-
 // Remove item from cart
-app.delete('/api/cart/:id', authenticateToken, async (req, res) => {
-  const buyerId = req.user.buyerId;
+app.delete('/api/cart/:id', userOnly, async (req, res) => {
+  const buyerId = req.user.buyerId; // Extract buyerId from the token
   const itemId = req.params.id;
 
-  console.log(`Attempting to remove item ${itemId} for buyer ${buyerId}`);
-
   try {
-    const cartItem = await CartItem.findOne({ _id: itemId, buyerId }); // This correctly checks for the cart item ID
+    const cartItem = await CartItem.findOne({ _id: itemId, buyerId }); // Correctly checks for the cart item ID
     if (!cartItem) {
-      console.error(`Item ${itemId} not found for buyer ${buyerId}`);
       return res.status(404).json({ success: false, message: 'Cart item not found or unauthorized' });
     }
 
     await cartItem.deleteOne(); // Use deleteOne() instead of remove()
-    console.log(`Item ${itemId} successfully removed from cart for buyer ${buyerId}`);
     res.json({ success: true, message: 'Item removed from cart', item: cartItem });
   } catch (error) {
     console.error('Error removing cart item:', error);
     res.status(500).json({ success: false, message: 'Error removing item from cart' });
   }
 });
+
 
 
 

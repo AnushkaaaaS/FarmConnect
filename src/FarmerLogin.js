@@ -42,7 +42,7 @@ const FarmerLogin = () => {
             console.log('Farmer Login:', data); // Log response data for debugging
 
             // Store the token in localStorage
-            localStorage.setItem('farmerToken', data.token); // Store the JWT token
+            localStorage.setItem('token', data.token); // Store the JWT token
 
             // Store farmer info in localStorage (optional)
             localStorage.setItem('farmer', JSON.stringify(data.farmer));
