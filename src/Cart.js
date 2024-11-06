@@ -176,37 +176,9 @@ const Cart = () => {
 
     // Function to handle proceed to checkout
     const handleCheckout = async () => {
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-            toast.error("Please log in to proceed to checkout");
-            navigate('/buyer-login');
-            return;
-        }
-
-        try {
-            const response = await fetch('http://localhost:5000/api/checkout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ cartItems, totalPrice }),
-            });
-
-            if (response.ok) {
-                toast.success('Checkout successful!');
-                setCartItems([]); // Clear cart state after checkout
-                calculateTotalPrice([]); // Reset total price
-                navigate('/buyer-dashboard');
-            } else {
-                throw new Error('Checkout failed. Please try again.');
-            }
-        } catch (error) {
-            console.error('Checkout error:', error);
-            toast.error('An error occurred. Please try again.');
-        }
-    };
+      navigate('/api/checkout')
+    }
+       
 
     // Calculate delivery charge based on subscription status
     const deliveryCharge = isSubscribed ? 0 : (totalPrice > freeDeliveryThreshold ? 0 : deliveryFee);

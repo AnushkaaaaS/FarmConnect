@@ -1,160 +1,136 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import './SubscriptionForm.css';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Checkout.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import BuyerNavBar from '../BuyerNavBar';
 
-function SubscriptionFormPage() {
-    const [email, setEmail] = useState("");
-    const [subscriptionType, setSubscriptionType] = useState("");
-    const [cardNumber, setCardNumber] = useState("");
-    const [expiryDate, setExpiryDate] = useState("");
-    const [cvv, setCvv] = useState("");
-    const [loading, setLoading] = useState(false); // New loading state
+const BuyerSubscriptionPage = () => {
+    const [subscriptionPlan, setSubscriptionPlan] = useState(null);
+    const [totalAmount, setTotalAmount] = useState(0);
     const navigate = useNavigate();
 
-    const validateInput = () => {
-        // Simple validations
-        if (!/^\d{16}$/.test(cardNumber)) {
-            alert('Card number must be 16 digits.');
-            return false;
-        }
-        if (!/^\d{3}$/.test(cvv)) {
-            alert('CVV must be 3 digits.');
-            return false;
-        }
-        if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiryDate)) {
-            alert('Expiry date must be in MM/YY format.');
-            return false;
-        }
-        return true;
+    // Handle subscription selection
+    const handleSelectPlan = (plan, amount) => {
+        setSubscriptionPlan(plan);
+        setTotalAmount(amount);
     };
 
-    // Function to handle form submission
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-
-        // Validate input
-        if (!validateInput()) {
+    // Proceed to payment and handle the payment flow
+    const handleProceedToPayment = () => {
+        if (!subscriptionPlan) {
+            toast.error("Please select a subscription plan");
             return;
         }
 
-        // Data to be sent to the backend
-        const formData = {
-            email,
-            subscriptionType,
-            cardNumber,
-            expiryDate,
-            cvv
+        const amountInPaise = totalAmount * 100; // Convert to paise
+
+        const loadRazorpayScript = () => {
+            return new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+                script.onload = () => resolve(true);
+                script.onerror = () => resolve(false);
+                document.body.appendChild(script);
+            });
+        };
+
+        const initiatePayment = async () => {
+            const scriptLoaded = await loadRazorpayScript();
+            if (!scriptLoaded) {
+                toast.error("Failed to load Razorpay SDK. Please try again.");
+                return;
+            }
+
+            const options = {
+                key: 'rzp_test_2BZTggwTEwm8GC', // Use your Razorpay key
+                amount: amountInPaise,
+                currency: 'INR',
+                name: 'FarmConnect Subscription',
+                description: 'Subscription Payment',
+                handler: function (response) {
+                    toast.success("Payment successful! Payment ID: " + response.razorpay_payment_id);
+                    handleSubscription(response.razorpay_payment_id); // Handle subscription after successful payment
+                },
+                prefill: {
+                    name: "User Name",
+                    email: "user@example.com",
+                    contact: "9999999999",
+                },
+                theme: {
+                    color: '#3399cc',
+                },
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+        };
+
+        initiatePayment();
+    };
+
+    // Handle subscription after successful payment
+    const handleSubscription = async (paymentId) => {
+        const subscriptionDetails = {
+            subscriptionType: subscriptionPlan, // Get subscription type from selected plan
+            paymentId: paymentId, // Pass payment ID from Razorpay
         };
 
         try {
-            // Set loading state
-            setLoading(true);
-            const token = localStorage.getItem('token');
-
             const response = await fetch('http://localhost:5000/api/subscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`, // Pass the token for authorization
                 },
-                body: JSON.stringify(formData),
+                body: JSON.stringify(subscriptionDetails),
             });
 
-            setLoading(false); // Reset loading state
-
-            if (response.ok) {
-                alert('Subscription successful!');
-                navigate("/buyer-dashboard");
+            const data = await response.json();
+            if (data.message === 'Subscription successful!') {
+                toast.success('Subscription successful!');
+                setTimeout(() => {
+                    navigate('/buyer-dashboard'); // Redirect after subscription
+                }, 2000);
             } else {
-                const errorData = await response.json();
-                console.error('Error data:', errorData); // Log error data for debugging
-                alert(`Subscription failed: ${errorData.message}`);
+                toast.error(data.message);
             }
         } catch (error) {
-            setLoading(false); // Reset loading state
-            console.error('Error submitting form:', error);
-            alert('An error occurred. Please try again.');
+            console.error('Error subscribing:', error);
+            toast.error('Failed to subscribe. Please try again.');
         }
     };
 
     return (
-        <div className="subscription-form-page-container">
-            <h1 className="page-title">Subscribe to Our Service</h1>
-            <div className="form-container">
-                <div className="columns-wrapper">
-                    <div className="form-column">
-                        <h2>Payment Information</h2>
-                        <form onSubmit={handleSubmit}>
-                            <div className="form-group">
-                                <label htmlFor="email">Email:</label>
-                                <input
-                                    type="email"
-                                    id="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    required
-                                    placeholder="Enter your email"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="subscriptionType">Subscription Type:</label>
-                                <select
-                                    id="subscriptionType"
-                                    value={subscriptionType}
-                                    onChange={(e) => setSubscriptionType(e.target.value)}
-                                    required
-                                >
-                                    <option value="">Select Subscription Type</option>
-                                    <option value="weekly">Weekly</option>
-                                    <option value="monthly">Monthly</option>
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="cardNumber">Card Number:</label>
-                                <input
-                                    type="text"
-                                    id="cardNumber"
-                                    value={cardNumber}
-                                    onChange={(e) => setCardNumber(e.target.value)}
-                                    maxLength="16"
-                                    required
-                                    placeholder="Enter 16-digit card number"
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="expiryDate">Expiry Date:</label>
-                                <input
-                                    type="text"
-                                    id="expiryDate"
-                                    value={expiryDate}
-                                    onChange={(e) => setExpiryDate(e.target.value)}
-                                    placeholder="MM/YY"
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="cvv">CVV:</label>
-                                <input
-                                    type="text"
-                                    id="cvv"
-                                    value={cvv}
-                                    onChange={(e) => setCvv(e.target.value)}
-                                    placeholder="CVV"
-                                    required
-                                />
-                            </div>
+        <>
+            <BuyerNavBar
+                onCartClick={() => navigate('/cart')}
+                onAccountClick={() => navigate('/account')}
+                onLogout={() => navigate('/buyer-login')}
+            />
+            <div className="checkout-page-container">
+                <h1>Subscribe Now</h1>
+                <div className="checkout-content">
+                    <div className="checkout-section">
+                        <h2>Select Subscription Plan</h2>
+                        <div className="subscription-options">
+                            <button onClick={() => handleSelectPlan('Weekly Plan', 99)}>Weekly - ₹99</button>
+                            <button onClick={() => handleSelectPlan('Monthly Plan', 299)}>Monthly - ₹299</button>
+                            <button onClick={() => handleSelectPlan('Yearly Plan', 999)}>Yearly - ₹999</button>
+                        </div>
+                    </div>
 
-                            <div className="form-group full-width-button">
-                                <button type="submit" className="subscribe-button" disabled={loading}>
-                                    {loading ? 'Subscribing...' : 'Subscribe Now'}
-                                </button>
-                            </div>
-                        </form>
+                    <div className="order-summary">
+                        <h3>Selected Plan: {subscriptionPlan}</h3>
+                        <h3>Total Amount: ₹{totalAmount}</h3>
                     </div>
                 </div>
-            </div>
-        </div>
-    );
-}
 
-export default SubscriptionFormPage;
+                <button className="submit-button" onClick={handleProceedToPayment}>Proceed to Payment</button>
+                <ToastContainer />
+            </div>
+        </>
+    );
+};
+
+export default BuyerSubscriptionPage;

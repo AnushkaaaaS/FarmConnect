@@ -36,7 +36,7 @@ const HomePage = () => {
     navigate('/buyers');
   };
   const handleAdminClick=()=>{
-    navigate('/admin-page')
+    navigate('/admin-login')
   }
 
   return (

@@ -12,6 +12,7 @@ const Products = () => {
     const [products, setProducts] = useState([]); // Load products based on category
     const [selectedProduct, setSelectedProduct] = useState(null); // State to manage selected product for farmer details
     const [quantities, setQuantities] = useState({}); // State to manage selected quantities for products
+    const [farmerDetails, setFarmerDetails] = useState({}); // State to store farmer details fetched
     const navigate = useNavigate(); // Hook for navigation
 
     // Fetch products from the API when the component mounts
@@ -30,8 +31,32 @@ const Products = () => {
     }, [category]);
 
     // Toggle farmer details visibility
-    const toggleKisanDetails = (productId) => {
-        setSelectedProduct((prevProductId) => (prevProductId === productId ? null : productId));
+    const toggleKisanDetails = async (productId) => {
+        setSelectedProduct((prevProductId) => {
+            if (prevProductId === productId) {
+                setFarmerDetails({}); // Clear farmer details when closing
+                return null;
+            } else {
+                fetchFarmerDetails(productId); // Fetch farmer details when opening
+                return productId;
+            }
+        });
+    };
+
+    // Fetch farmer details for a specific product
+    const fetchFarmerDetails = async (productId) => {
+        try {
+            const response = await fetch(`http://localhost:5000/api/products/${productId}/farmer-details`);
+            const data = await response.json();
+            if (data.success) {
+                setFarmerDetails(data.farmerDetails);
+            } else {
+                toast.error("Failed to fetch farmer details.");
+            }
+        } catch (error) {
+            console.error('Error fetching farmer details:', error);
+            toast.error("An error occurred while fetching farmer details.");
+        }
     };
 
     // Function to handle Add to Cart action
@@ -139,15 +164,17 @@ const Products = () => {
                                                 <FontAwesomeIcon icon={faShoppingCart} /> Add to Cart
                                             </button>
                                         </div>
-                                        {selectedProduct === product._id && (
+
+                                        {/* Display Farmer Details */}
+                                        {selectedProduct === product._id && farmerDetails && (
                                             <div className="farmer-details">
                                                 <h4>Farmer Details:</h4>
-                                                <p><strong>Name:</strong> {product.farmerDetails.farmerName}</p>
-                                                <p><strong>Location:</strong> {product.farmerDetails.location}</p>
-                                                <p><strong>Total Area:</strong> {product.farmerDetails.totalArea}</p>
-                                                <p><strong>Area Under Cultivation:</strong> {product.farmerDetails.areaUnderCultivation}</p>
-                                                <p><strong>Crop Cycle:</strong> {product.farmerDetails.cropCycle}</p>
-                                                <p><strong>Agriculture Method:</strong> {product.farmerDetails.agricultureMethod}</p>
+                                                <p><strong>Name:</strong> {farmerDetails.name}</p>
+                                                <p><strong>Location:</strong> {farmerDetails.location}</p>
+                                                <p><strong>Total Area:</strong> {farmerDetails.totalArea}</p>
+                                                <p><strong>Area Under Cultivation:</strong> {farmerDetails.areaUnderCultivation}</p>
+                                                <p><strong>Crop Cycle:</strong> {farmerDetails.cropCycle}</p>
+                                                <p><strong>Agriculture Method:</strong> {farmerDetails.agricultureMethod}</p>
                                             </div>
                                         )}
                                     </div>

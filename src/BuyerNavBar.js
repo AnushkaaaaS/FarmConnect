@@ -28,6 +28,10 @@ const BuyerNavBar = () => {
         navigate('/'); // Redirect to the homepage after logout
     };
 
+    const handleOrderClick=()=>{
+        navigate("/buyer-orders")
+    }
+
     return (
         <nav className="navbar">
             <div className="navbar-logo" onClick={() => navigate('/buyer-dashboard')}>
@@ -44,6 +48,10 @@ const BuyerNavBar = () => {
                 {/* Account Icon */}
                 <li onClick={handleAccountClick}>
                     <FontAwesomeIcon icon={faUser} className="icon" /> Account
+                </li>
+
+                <li onClick={handleOrderClick}>
+                     Your Orders
                 </li>
 
                 {/* Logout Icon */}

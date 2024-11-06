@@ -1,104 +1,75 @@
-.subscription-form-page-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.checkout-page-container {
     padding: 20px;
-    background-color: #f1f1f1;
-    min-height: 100vh; /* Ensure full viewport height */
-    box-sizing: border-box; /* Include padding in height calculations */
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
 }
 
-.page-title {
-    font-size: 2rem; /* Reduced font size */
-    color: #333;
+h1 {
+    font-size: 2rem;
     margin-bottom: 20px;
-    text-align: center;
 }
 
-.form-container {
-    background-color: white;
+.checkout-content {
+    background-color: #f4f4f4;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 900px;
-    width: 100%;
-    max-height: 75vh; /* Reduced max height */
-    overflow-y: auto;
-    font-family: 'Roboto', sans-serif; /* Change font to 'Roboto' for cleaner look */
-    font-size: 0.9rem; /* General smaller font size */
 }
 
-/* Columns Wrapper for Personal and Payment Info */
-.columns-wrapper {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px; /* Reduced gap between columns */
+.checkout-section {
+    margin-bottom: 30px;
 }
 
-/* Individual column styling */
-.form-column {
-    flex: 1;
-}
-
-.form-column h2 {
-    font-size: 1.5rem; /* Reduced font size for section headings */
-    margin-bottom: 15px;
-    color: #007b5e;
-}
-
-.form-group {
+.checkout-section h2 {
+    font-size: 1.5rem;
     margin-bottom: 15px;
 }
 
-label {
-    font-size: 0.9rem; /* Reduced label font size */
-    color: #555;
-    margin-bottom: 6px;
-    display: block;
-}
-
-input, select {
-    width: 100%;
-    padding: 8px; /* Reduced padding for inputs */
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 0.9rem; /* Smaller input font size */
-}
-
-input:focus, select:focus {
-    border-color: #007b5e;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 94, 0.5);
-}
-
-/* Full width button at the bottom */
-.full-width-button {
-    margin-top: 15px; /* Reduced spacing */
-    text-align: center;
-}
-
-.subscribe-button {
-    width: 50%;
-    padding: 12px; /* Reduced padding */
-    background-color: #007b5e;
+.subscription-options button {
+    background-color: #3399cc;
     color: white;
+    font-size: 1rem;
+    padding: 10px 20px;
+    margin: 5px;
     border: none;
     border-radius: 5px;
-    font-size: 1.1rem; /* Slightly reduced button font size */
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
-.subscribe-button:hover {
-    background-color: #005a40;
+.subscription-options button:hover {
+    background-color: #0066cc;
 }
 
-@media screen and (max-width: 768px) {
-    .columns-wrapper {
-        flex-direction: column;
-    }
+.order-summary {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
 
-    .subscribe-button {
-        width: 100%;
-    }
+.submit-button {
+    background-color: #28a745;
+    color: white;
+    font-size: 1.2rem;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.submit-button:focus {
+    outline: none;
+}
+
+.Toastify__toast-container {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
 }

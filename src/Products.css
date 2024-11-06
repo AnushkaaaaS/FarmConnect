@@ -1,4 +1,3 @@
-
 .products-page-container {
     display: flex;
     font-family: 'Roboto', sans-serif; /* Use a nice font for the entire page */
@@ -38,33 +37,40 @@
 .products-container {
     padding: 20px;
     flex-grow: 1; /* Take remaining space */
+    margin: 10px;
 }
 
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Adjust the column size */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Adjust minimum width */
     gap: 15px;
 }
 
+
 .product-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 300px;
+margin:10px;
+    width: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
-    max-width: 100%; /* Make the card more compact */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
 }
 
 .product-image {
-    width: 200px; /* Smaller image */
-    height: 150px;
-    object-fit: cover;
+    width: 100%; /* Full width */
+    height: auto; /* Adjust height automatically */
+    max-height: 150px; /* Maximum height to keep it consistent */
+    object-fit: contain; /* Contain image without cropping */
     border-radius: 4px;
     margin-bottom: 10px;
 }
+
+
 
 .product-details {
     text-align: center;

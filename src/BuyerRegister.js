@@ -24,8 +24,8 @@ const BuyerRegister = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    address: '',
     phoneNumber: '',
+    adress:'',
     email: '',
     password: '',
     confirmPassword: '',

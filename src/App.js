@@ -22,6 +22,10 @@ import SubscriptionFormPage from './components/SubscriptionForm';
 import AdminDashboardPage from './components/Admin';
 import SubscriptionFarmerPage from './components/SubscriptionFarmer';
 import YourProducts from './components/YourProducts';
+import CheckoutPage from './components/CheckoutPage';
+import FarmerOrders from './components/FarmerOrders';
+import YourOrders from './components/YourOrders';
+import AdminLoginPage from './components/AdminLogin';
 
 // Create a wrapper component for handling logout and navigation
 const AppRoutes = () => {
@@ -61,6 +65,13 @@ const AppRoutes = () => {
       <Route path="/subscription-form" element={<SubscriptionFormPage />} />
       <Route path="/subscription-form-farmer" element={<SubscriptionFarmerPage />} />
       <Route path="/your-products" element={<YourProducts />} />
+      <Route path="/api/checkout" element={<CheckoutPage />} />
+      <Route path="/farmer-orders" element={<FarmerOrders />} />
+      <Route path="/buyer-orders" element={<YourOrders />} />
+      <Route path="/admin-login" element={<AdminLoginPage />} />
+
+
+
 
 
 

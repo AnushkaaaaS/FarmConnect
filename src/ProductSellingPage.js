@@ -14,14 +14,7 @@ function ProductSellingPage() {
   const [unit, setUnit] = useState(editingProduct?.unit || "");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(editingProduct?.imageUrl || ""); // Initialize with existing image if editing
-  const [farmerDetails, setFarmerDetails] = useState(editingProduct?.farmerDetails || {
-    farmerName: "",
-    location: "",
-    totalArea: "",
-    areaUnderCultivation: "",
-    cropCycle: "",
-    agricultureMethod: "",
-  });
+ 
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -33,10 +26,7 @@ function ProductSellingPage() {
     }
   };
 
-  const handleFarmerDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setFarmerDetails((prevDetails) => ({ ...prevDetails, [name]: value }));
-  };
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,7 +40,6 @@ function ProductSellingPage() {
     formData.append("quantity", quantity);
     formData.append("unit", unit);
     formData.append("productImage", imageFile);
-    formData.append("farmerDetails", JSON.stringify(farmerDetails));
 
     try {
       const response = await fetch("http://localhost:5000/api/products", {
@@ -117,41 +106,7 @@ function ProductSellingPage() {
             </div>
           </div>
 
-          {/* Farmer Details Section */}
-          <div className="farmer-details-section">
-            <h3>Farmer Details</h3>
-            <div className="form-grid">
-              <div className="form-group">
-                <label>Farmer Name:</label>
-                <input type="text" name="farmerName" value={farmerDetails.farmerName} onChange={handleFarmerDetailsChange} required />
-              </div>
-
-              <div className="form-group">
-                <label>Location:</label>
-                <input type="text" name="location" value={farmerDetails.location} onChange={handleFarmerDetailsChange} required />
-              </div>
-
-              <div className="form-group">
-                <label>Total Area (in acres):</label>
-                <input type="number" name="totalArea" value={farmerDetails.totalArea} onChange={handleFarmerDetailsChange} required />
-              </div>
-
-              <div className="form-group">
-                <label>Area Under Cultivation (in acres):</label>
-                <input type="number" name="areaUnderCultivation" value={farmerDetails.areaUnderCultivation} onChange={handleFarmerDetailsChange} required />
-              </div>
-
-              <div className="form-group">
-                <label>Crop Cycle:</label>
-                <input type="text" name="cropCycle" value={farmerDetails.cropCycle} onChange={handleFarmerDetailsChange} required />
-              </div>
-
-              <div className="form-group">
-                <label>Agriculture Method:</label>
-                <input type="text" name="agricultureMethod" value={farmerDetails.agricultureMethod} onChange={handleFarmerDetailsChange} required />
-              </div>
-            </div>
-          </div>
+      
 
           <button type="submit" className="submit-button">{editingProduct ? "Update Product" : "Submit Product"}</button>
         </form>

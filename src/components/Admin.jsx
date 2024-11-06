@@ -2,19 +2,19 @@ import React, { useEffect, useState } from "react";
 import './Admin.css'; // CSS file for styling
 
 function AdminDashboardPage() {
-    const [userSubscriptions, setUserSubscriptions] = useState([]);
-    const [farmerSubscriptions, setFarmerSubscriptions] = useState([]);
+    const [buyers, setBuyers] = useState([]); // State for buyers
+    const [farmers, setFarmers] = useState([]); // State for farmers
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchSubscriptions = async () => {
+        const fetchUserSubscriptions = async () => {
             try {
                 const response = await fetch('http://localhost:5000/admin-page');
                 if (response.ok) {
                     const data = await response.json();
                     console.log(data); // Debug: Check data structure
-                    setUserSubscriptions(data.userSubscriptions || []);
-                    setFarmerSubscriptions(data.farmerSubscriptions || []);
+                    setBuyers(data.buyers || []); // Set only buyers data
+                    setFarmers(data.farmers || []); // Set only farmers data
                 } else {
                     console.error('Failed to fetch subscriptions');
                 }
@@ -25,7 +25,7 @@ function AdminDashboardPage() {
             }
         };
 
-        fetchSubscriptions();
+        fetchUserSubscriptions();
     }, []);
 
     if (loading) {
@@ -36,67 +36,59 @@ function AdminDashboardPage() {
         <div className="admin-dashboard">
             <h1>Admin Dashboard</h1>
             <div className="table-container">
-                {/* User Subscriptions Table */}
-                <h2>User Subscriptions</h2>
+                {/* Buyers Table */}
+                <h2>Buyers</h2>
                 <table>
                     <thead>
                         <tr>
-                            <th>Buyer Name</th>
+                            <th>Name</th>
                             <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Subscription Status</th>
                             <th>Subscription Type</th>
-                            <th>Card Number</th>
-                            <th>Expiry Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {userSubscriptions.map((subscription) => (
-                            <tr key={subscription._id}>
+                        {buyers.map((buyer) => (
+                            <tr key={buyer._id}>
                                 <td>
-                                    {subscription.buyer?.firstName && subscription.buyer?.lastName
-                                        ? `${subscription.buyer.firstName} ${subscription.buyer.lastName}`
+                                    {buyer.firstName && buyer.lastName
+                                        ? `${buyer.firstName} ${buyer.lastName}`
                                         : 'N/A'}
                                 </td>
-                                <td>{subscription.buyer?.email || 'N/A'}</td>
-                                <td>{subscription.subscriptionType || 'N/A'}</td>
-                                <td>
-                                    {subscription.cardNumber
-                                        ? subscription.cardNumber.replace(/\d(?=\d{4})/g, "*")
-                                        : 'N/A'}
-                                </td>
-                                <td>{subscription.expiryDate || 'N/A'}</td>
+                                <td>{buyer.email || 'N/A'}</td>
+                                <td>{buyer.phoneNumber || 'N/A'}</td>
+                                <td>{buyer.subscription ? 'Active' : 'Inactive'}</td>
+                                <td>{buyer.subscription?.subscriptionType || 'N/A'}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
 
-                {/* Farmer Subscriptions Table */}
-                <h2>Farmer Subscriptions</h2>
+                {/* Farmers Table */}
+                <h2>Farmers</h2>
                 <table>
                     <thead>
                         <tr>
-                            <th>Farmer Name</th>
+                            <th>Name</th>
                             <th>Email</th>
+                            <th>Phone Number</th>
+                            <th>Subscription Status</th>
                             <th>Subscription Type</th>
-                            <th>Card Number</th>
-                            <th>Expiry Date</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {farmerSubscriptions.map((subscription) => (
-                            <tr key={subscription._id}>
+                        {farmers.map((farmer) => (
+                            <tr key={farmer._id}>
                                 <td>
-                                    {subscription.farmer?.firstName && subscription.farmer?.lastName
-                                        ? `${subscription.farmer.firstName} ${subscription.farmer.lastName}`
+                                    {farmer.firstName && farmer.lastName
+                                        ? `${farmer.firstName} ${farmer.lastName}`
                                         : 'N/A'}
                                 </td>
-                                <td>{subscription.farmer?.email || 'N/A'}</td>
-                                <td>{subscription.subscriptionType || 'N/A'}</td>
-                                <td>
-                                    {subscription.cardNumber
-                                        ? subscription.cardNumber.replace(/\d(?=\d{4})/g, "*")
-                                        : 'N/A'}
-                                </td>
-                                <td>{subscription.expiryDate || 'N/A'}</td>
+                                <td>{farmer.email || 'N/A'}</td>
+                                <td>{farmer.phoneNumber || 'N/A'}</td>
+                                <td>{farmer.subscription ? 'Active' : 'Inactive'}</td>
+                                <td>{farmer.subscription?.subscriptionType || 'N/A'}</td>
                             </tr>
                         ))}
                     </tbody>

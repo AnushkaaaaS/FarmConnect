@@ -55,25 +55,86 @@ const upload = multer({
 const buyerSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  address: { type: String, required: true },
+  address: { type: String, default: null },
   phoneNumber: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'UserSubscription', default: null },
+  subscription: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'UserSubscription', 
+    default: null
+  },
 });
-
 const Buyer = mongoose.model('Buyer', buyerSchema);
-// Farmer Schema
+
+
+// The `UserSubscription` model should have a `subscriptionType` or `planType` field
+
+
+
 const farmerSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  subscription: { type: mongoose.Schema.Types.ObjectId, ref: 'FarmerSubscription', default: null },
-
+  subscription: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: 'FarmerSubscription', 
+    default: null
+  },
+  farmerDetails: {
+    location: { type: String, required: true },
+    totalArea: { type: Number, required: true },
+    areaUnderCultivation: { type: Number, required: true },
+    cropCycle: { type: String, required: true },
+    agricultureMethod: { type: String, required: true },
+  }
 });
 
 const Farmer = mongoose.model('Farmer', farmerSchema);
+
+
+
+app.get('/api/products/:productId/farmer-details', async (req, res) => {
+  const { productId } = req.params;
+
+  try {
+      // Find the product by its ID
+      const product = await Product.findById(productId);
+
+      if (!product) {
+          return res.status(404).json({ success: false, message: 'Product not found' });
+      }
+
+      // Get the farmerId from the product
+      const farmerId = product.farmerId;
+
+      // Fetch the farmer details using the farmerId
+      const farmerDetails = await Farmer.findById(farmerId);
+
+      if (!farmerDetails) {
+          return res.status(404).json({ success: false, message: 'Farmer details not found' });
+      }
+
+      // Send the farmer's name and farmer details as the response
+      res.status(200).json({
+          success: true,
+          farmerDetails: {
+              name: `${farmerDetails.firstName} ${farmerDetails.lastName}`,
+              location: farmerDetails.farmerDetails.location,
+              totalArea: farmerDetails.farmerDetails.totalArea,
+              areaUnderCultivation: farmerDetails.farmerDetails.areaUnderCultivation,
+              cropCycle: farmerDetails.farmerDetails.cropCycle,
+              agricultureMethod: farmerDetails.farmerDetails.agricultureMethod,
+          }
+      });
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'An error occurred' });
+  }
+});
+
+
 
 // Product Schema (includes image path and farmer details)
 const productSchema = new mongoose.Schema({
@@ -85,16 +146,7 @@ const productSchema = new mongoose.Schema({
   quantity: { type: Number, required: true },
   imageUrl: { type: String, required: true },
   farmerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Farmer', required: true }, // New field
-  farmerDetails: {
-    farmerName: { type: String, required: true },
-    location: { type: String, required: true },
-    totalArea: { type: String, required: true },
-    areaUnderCultivation: { type: String, required: true },
-    cropCycle: { type: String, required: true },
-    agricultureMethod: { type: String, required: true },
-  },
-});
-
+})
 
 
 
@@ -102,9 +154,10 @@ const Product = mongoose.model('Product', productSchema);
 
 const userSubscriptionSchema = new mongoose.Schema({
   subscriptionType: { type: String, required: true },
-  cardNumber: { type: String, required: true },
-  expiryDate: { type: String, required: true },
-  cvv: { type: String, required: true },
+  paymentId: { 
+    type: String, 
+    required: true 
+},
   buyer: { type: mongoose.Schema.Types.ObjectId, ref: 'Buyer', required: true },
 });
 
@@ -112,9 +165,10 @@ const UserSubscription = mongoose.model('UserSubscription', userSubscriptionSche
 
 const farmerSubscriptionSchema = new mongoose.Schema({
   subscriptionType: { type: String, required: true },
-  cardNumber: { type: String, required: true },
-  expiryDate: { type: String, required: true },
-  cvv: { type: String, required: true },
+  paymentId: { 
+    type: String, 
+    required: true 
+},
   farmer: { type: mongoose.Schema.Types.ObjectId, ref: 'Farmer', required: true },
 });
 
@@ -184,20 +238,26 @@ app.get('/api/buyer/:id', async (req, res) => {
 
 app.get('/admin-page', async (req, res) => {
   try {
-      const userSubscriptions = await UserSubscription.find().populate({
-          path: 'buyer',
-          select: 'firstName lastName email' // Select specific fields to show
-      });
+      // Fetch all buyers with populated subscription data
+      const buyers = await Buyer.find().populate('subscription');
 
-      const farmerSubscriptions = await FarmerSubscription.find().populate({
-          path: 'farmer',
-          select: 'firstName lastName email' // Select specific fields to show
-      });
+      // Fetch all farmers with populated subscription data
+      const farmers = await Farmer.find().populate('subscription');
 
-      res.status(200).json({ userSubscriptions, farmerSubscriptions });
+      // Return buyers and farmers data separately
+      res.json({
+          buyers: buyers.map(buyer => ({
+              ...buyer.toObject(),
+              type: 'Buyer' // Mark as Buyer
+          })),
+          farmers: farmers.map(farmer => ({
+              ...farmer.toObject(),
+              type: 'Farmer' // Mark as Farmer
+          }))
+      });
   } catch (error) {
-      console.error('Error fetching subscriptions:', error);
-      res.status(500).json({ message: 'Error fetching subscriptions' });
+      console.error('Error fetching users:', error);
+      res.status(500).json({ error: 'Failed to fetch users' });
   }
 });
 
@@ -223,13 +283,35 @@ app.get('/api/user/status', userOnly, async (req, res) => {
   }
 });
 
+app.get('/api/farmer/status', farmerOnly, async (req, res) => {
+  try {
+      const farmerId = req.user.farmerId; // Ensure you're getting the ID from the token
+      console.log('Fetching subscription status for farmer ID:', farmerId); // Debug log
+
+      const farmer = await Farmer.findById(farmerId).populate('subscription');
+
+      if (!farmer) {
+          return res.status(404).json({ message: 'Farmer not found.' });
+      }
+
+      console.log('Farmer found:', farmer); // Log the found farmer
+
+      const isSubscribed = farmer.subscription !== null; // Assuming null means no subscription
+
+      res.status(200).json({ is_subscribed: isSubscribed });
+  } catch (error) {
+      console.error('Error fetching subscription status:', error);
+      res.status(500).json({ message: 'Internal server error.' });
+  }
+});
+
 
 
 app.post('/api/subscribe', userOnly, async (req, res) => {
-  const { subscriptionType, cardNumber, expiryDate, cvv } = req.body;
+  const { subscriptionType, paymentId } = req.body;
 
   // Validate required fields
-  if (!subscriptionType || !cardNumber || !expiryDate || !cvv) {
+  if (!subscriptionType || !paymentId) {
       return res.status(400).json({ message: 'All fields are required' });
   }
 
@@ -247,13 +329,11 @@ app.post('/api/subscribe', userOnly, async (req, res) => {
           return res.status(400).json({ message: 'You can only subscribe once.' });
       }
 
-      // Create a new subscription document
+      // Create a new subscription document with the buyer ID
       const newSubscription = new UserSubscription({
           subscriptionType,
-          cardNumber,
-          expiryDate,
-          cvv,
-          buyer: buyer._id,
+          paymentId,
+          buyer: buyerId, // Include the buyer ID here
       });
 
       // Save the subscription to the database
@@ -272,39 +352,39 @@ app.post('/api/subscribe', userOnly, async (req, res) => {
 
 
 
-app.post('/api/subscribe-farmer', async (req, res) => {
-  const { email, subscriptionType, cardNumber, expiryDate, cvv } = req.body;
+
+
+
+app.post('/api/subscribe-farmer', farmerOnly, async (req, res) => {
+  const { subscriptionType, paymentId } = req.body;
 
   // Validate required fields
-  if (!email || !subscriptionType || !cardNumber || !expiryDate || !cvv) {
+  if (!subscriptionType || !paymentId) {
       return res.status(400).json({ message: 'All fields are required' });
   }
 
+  const farmerId = req.user.farmerId; // Extract farmer ID from the token
+
   try {
-      // Find the farmer by email
-      const farmer = await Farmer.findOne({ email });
+      const farmer = await Farmer.findById(farmerId).populate('subscription');
       if (!farmer) {
           return res.status(404).json({ message: 'Farmer not found' });
       }
 
       // Check if the farmer already has an active subscription
-      if (farmer.subscription!=null) {
-          return res.status(400).json({ message: 'Farmer already has an active subscription' });
+      if (farmer.subscription) {
+          return res.status(400).json({ message: 'You can only subscribe once.' });
       }
 
       // Create a new subscription document
       const newSubscription = new FarmerSubscription({
           subscriptionType,
-          cardNumber,
-          expiryDate,
-          cvv,
+          paymentId,
           farmer: farmer._id,
       });
 
-      // Save the subscription to the database
+      // Save the subscription and update the farmer
       const savedSubscription = await newSubscription.save();
-
-      // Update the farmer's subscription field
       farmer.subscription = savedSubscription._id;
       await farmer.save();
 
@@ -323,32 +403,32 @@ app.post('/api/subscribe-farmer', async (req, res) => {
 // Farmer Registration Route
 
 app.post('/api/farmer-register', async (req, res) => {
-  const { firstName, lastName, email, password } = req.body; // Ensure you're expecting the correct fields
+  const { firstName, lastName, email, password, farmerDetails } = req.body;
 
-  // Check if all fields are provided
-  if (!firstName || !lastName || !email || !password ) {
+  if (!firstName || !lastName || !email || !password || !farmerDetails) {
     return res.status(400).json({ success: false, message: 'All fields are required' });
   }
 
   try {
-    // Check if the farmer already exists by email
     const existingFarmer = await Farmer.findOne({ email });
     if (existingFarmer) {
       return res.status(400).json({ success: false, message: 'Farmer already exists with this email.' });
     }
 
-   // Validate password
-   if (!validatePassword(password)) {
-    return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long and contain at least one letter and one number.' });
-  }
+    if (!validatePassword(password)) {
+      return res.status(400).json({ success: false, message: 'Password must be at least 6 characters long and contain at least one letter and one number.' });
+    }
 
-    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new farmer
-    const newFarmer = new Farmer({ firstName, lastName, email, password: hashedPassword });
+    const newFarmer = new Farmer({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+      farmerDetails
+    });
 
-    // Save the farmer to the database
     await newFarmer.save();
     res.status(201).json({ success: true, message: 'Farmer registered successfully!' });
   } catch (error) {
@@ -356,6 +436,7 @@ app.post('/api/farmer-register', async (req, res) => {
     res.status(500).json({ success: false, message: 'Error registering farmer' });
   }
 });
+
 
 // Buyer Login Route
 app.post('/api/login', async (req, res) => {
@@ -385,30 +466,20 @@ app.post('/api/login', async (req, res) => {
 });
 
 
-app.post('/api/admin-login', async (req, res) => {
-  const { email, password } = req.body;
+const ADMIN_USERNAME = 'admin';
+const ADMIN_PASSWORD = 'admin123'; // Change this to your desired password
 
-  try {
-    // Find the buyer by email
-    const buyer = await Buyer.findOne({ email });
-    if (buyer!="abcd@gmail.com") {
-      return res.status(400).json({ success: false, message: 'Invalid email or password' });
+// Admin login route
+app.post('/admin-login', (req, res) => {
+    const { username, password } = req.body;
+
+    // Check if the provided username and password match the fixed credentials
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+        return res.status(200).json({ message: 'Login successful' });
     }
 
-    // Check the password
-    const isMatch = await bcrypt.compare(password, buyer.password);
-    if (!isMatch) {
-      return res.status(400).json({ success: false, message: 'Invalid email or password' });
-    }
-
-    // Generate JWT token
-    
-
-    res.json({ success: true, message: 'Login successful!' });
-  } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ success: false, message: 'Error logging in' });
-  }
+    // If credentials don't match, return an error
+    return res.status(401).json({ error: 'Invalid credentials' });
 });
 
 
@@ -439,7 +510,7 @@ app.post('/api/farmer-login', async (req, res) => {
 
 
 app.post('/api/products', farmerOnly, upload.single('productImage'), async (req, res) => {
-  const { id, name, description, price, unit, category, quantity, farmerDetails } = req.body;
+  const { id, name, description, price, unit, category, quantity } = req.body;
   const imageUrl = req.file ? req.file.path : null;
 
   if (!name || !description || !price || !unit || !category || !quantity) {
@@ -463,7 +534,6 @@ app.post('/api/products', farmerOnly, upload.single('productImage'), async (req,
                   category,
                   quantity,
                   imageUrl: imageUrl || product.imageUrl,
-                  farmerDetails: farmerDetails ? JSON.parse(farmerDetails) : {},
                   farmerId: farmer._id,
               },
               { new: true }
@@ -479,7 +549,6 @@ app.post('/api/products', farmerOnly, upload.single('productImage'), async (req,
               category,
               quantity,
               imageUrl,
-              farmerDetails: farmerDetails ? JSON.parse(farmerDetails) : {},
               farmerId: farmer._id,
           });
           await product.save();
@@ -733,6 +802,16 @@ app.get('/api/cart', userOnly, async (req, res) => {
   }
 });
 
+
+
+
+
+
+
+
+
+
+
 // Remove item from cart
 app.delete('/api/cart/:id', userOnly, async (req, res) => {
   const buyerId = req.user.buyerId; // Extract buyerId from the token
@@ -752,6 +831,114 @@ app.delete('/api/cart/:id', userOnly, async (req, res) => {
   }
 });
 
+const orderSchema = new mongoose.Schema({
+  buyerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Buyer', required: true },
+  cartItems: [{
+      productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product', required: true },
+      quantity: { type: Number, required: true },
+  }],
+  totalPrice: { type: Number, required: true },
+  address: {
+      street: { type: String, required: true },
+      city: { type: String, required: true },
+      zip: { type: String, required: true },
+  },
+ 
+  status: { type: String, enum: ['Pending', 'Processing', 'Completed'], default: 'Pending' },
+}, { timestamps: true });
+
+const Order = mongoose.model('Order', orderSchema);
+
+const OrderStatusSchema = new mongoose.Schema({
+  name: {
+      type: String,
+      required: true,
+  },
+});
+
+const OrderStatus = mongoose.model('OrderStatus', OrderStatusSchema);
+
+app.get('/api/orders', userOnly, async (req, res) => {
+  const buyerId = req.user.buyerId;
+
+  try {
+      const orders = await Order.find({ buyerId }).sort({ createdAt: -1 });
+      return res.status(200).json({ success: true, orders });
+  } catch (error) {
+      console.error('Error fetching orders:', error);
+      return res.status(500).json({ success: false, message: 'Failed to fetch orders. Please try again.' });
+  }
+});
+
+app.post('/api/checkout', userOnly, async (req, res) => {
+  const buyerId = req.user.buyerId;
+  const { cartItems, totalPrice, address } = req.body;
+
+  try {
+      // Create a new order
+      const newOrder = new Order({
+          buyerId,
+          cartItems,
+          totalPrice,
+          address,
+      });
+
+      // Save the new order to the database
+      await newOrder.save();
+
+      // Delete the cart items associated with the buyer
+      await CartItem.deleteMany({ buyerId });
+
+      return res.status(201).json({ success: true, message: 'Order placed successfully!', order: newOrder });
+  } catch (error) {
+      console.error('Error placing order:', error);
+      return res.status(500).json({ success: false, message: 'Failed to place order. Please try again.' });
+  }
+});
+
+
+// Fetch farmer orders
+app.get('/api/farmer-orders', farmerOnly, async (req, res) => {
+  const farmerId = req.user.farmerId;
+
+  try {
+      // Find all products of the farmer
+      const products = await Product.find({ farmerId });
+
+      if (products.length === 0) {
+          return res.status(200).json({ success: true, orders: [] });
+      }
+
+      // Find orders that contain those products and populate details
+      const orders = await Order.find({
+          'cartItems.productId': { $in: products.map(product => product._id) }
+      })
+      .populate('cartItems.productId') // Populate product details
+      .populate('buyerId'); // Populate buyer details
+
+      res.status(200).json({ success: true, orders });
+  } catch (error) {
+      console.error('Error fetching orders:', error);
+      res.status(500).json({ success: false, message: 'Failed to fetch orders' });
+  }
+});
+
+// Update order status
+app.put('/api/update-order-status/:orderId', farmerOnly, async (req, res) => {
+  const { orderId } = req.params;
+  const { newStatus } = req.body;
+
+  try {
+      const order = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
+      if (!order) {
+          return res.status(404).json({ success: false, message: 'Order not found' });
+      }
+      res.status(200).json({ success: true, order });
+  } catch (error) {
+      console.error('Error updating order status:', error);
+      res.status(500).json({ success: false, message: 'Failed to update order status' });
+  }
+});
 
 
 
