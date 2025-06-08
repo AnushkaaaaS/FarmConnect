@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './BuyerAccountPage.css'; // Custom CSS for BuyerAccountPage
 import BuyerNavBar from './BuyerNavBar'; // Import BuyerNavBar component
-import buyerIcon from './assets/buyer.jpg'; // Default buyer icon image
+import buyerIcon from '../assets/buyer.jpg'; // Default buyer icon image
 import { useNavigate } from 'react-router-dom'; // For navigation
 import { fetchFromApi } from '../api'; // adjust if path differs
 

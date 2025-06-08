@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './FarmerAccountPage.css';
 import FarmerNavBar from './FarmerNavBar';
-import farmerIcon from './assets/farmer.jpg';
+import farmerIcon from '../assets/farmer.jpg';
 import { useNavigate } from 'react-router-dom';
 import { fetchFromApi } from '../api';  // import your helper
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import buyerBackground from './assets/buyerpagebck.avif'; // Ensure correct path for your background image
+import buyerBackground from '../assets/buyerpagebck.avif'; // Ensure correct path for your background image
 
 const buttonStyle = {
   width: '250px',
