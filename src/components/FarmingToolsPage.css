@@ -1,0 +1,173 @@
+/* Basic page styling */
+.product-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin-top: 30px;
+  }
+  
+  h1 {
+    color: #333;
+    margin-bottom: 20px;
+  }
+  
+  /* Grid styling */
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns for larger screens */
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+  }
+  
+  /* Individual card styling */
+  .product-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .product-card:hover {
+    transform: translateY(-5px);
+  }
+  
+  /* Adjust product image container */
+  .product-image-container {
+    width: 100%;
+    height: 1000px; /* Increased height for the image container */
+    display: flex;
+    justify-content: center; /* Centers the image horizontally */
+    align-items: center; /* Centers the image vertically */
+    overflow: hidden; /* Prevents overflow if the image exceeds container size */
+    margin-bottom: 15px;
+  }
+  
+  /* Image styling */
+  .product-image {
+    width: 100%;
+    height: auto; /* Ensures the image is responsive */
+    object-fit: cover; /* Ensures image covers the container area */
+    border-radius: 8px;
+    display: block; /* Prevents any default spacing below images */
+  }
+  
+  /* Product name styling */
+  .product-name {
+    font-size: 1.2em;
+    color: #333;
+    margin: 10px 0;
+  }
+  
+  /* Product description styling */
+  .product-description {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 15px;
+  }
+  
+  /* Price container styling */
+  .product-price-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .original-price {
+    text-decoration: line-through;
+    color: #999;
+  }
+  
+  .discounted-price {
+    font-size: 1.1em;
+    color: #333;
+    font-weight: bold;
+  }
+  
+  .discount-percentage {
+    color: #d9534f;
+    font-weight: bold;
+    font-size: 0.9em;
+  }
+  
+  /* Button styling */
+  .shop-now-button {
+    background-color: #FFD700; /* Golden color */
+    color: #333;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .shop-now-button:hover {
+    background-color: #ffbe00; /* Slightly darker golden shade */
+  }
+  
+  .shop-now-button:focus {
+    outline: none;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .product-grid {
+      grid-template-columns: 1fr 1fr; /* 2 columns on medium screens */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .product-grid {
+      grid-template-columns: 1fr; /* 1 column on small screens */
+    }
+  
+    /* Adjustments for smaller screens */
+    .product-image-container {
+      height: 300px; /* Reduced height for mobile screens */
+    }
+  }
+  
+  .subscription-benefits-section {
+    background-color: #f8f9fa;
+    padding: 30px 0;
+    text-align: center;
+}
+
+.subscription-benefits-section h2 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #333;
+}
+
+.subscription-benefits-section p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+    color: #666;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.view-tools-btn {
+    background-color: #28a745; /* Green for farming tools */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+}
+
+.view-tools-btn:hover {
+    background-color: #218838; /* Darker green for hover effect */
+}

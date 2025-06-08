@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Roboto:wght@300;400;500&display=swap');
+
+.product-selling-page-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+    background-color: #f3f4f6;
+    min-height: 100vh;
+}
+
+.product-selling-form {
+    width: 100%;
+    max-width: 800px; /* Increased width for better spacing */
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    font-family: 'Roboto', sans-serif;
+}
+
+.product-selling-form h2 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8em;
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* Two columns */
+    gap: 24px; /* Space between columns */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-selling-form label {
+    font-weight: 500;
+    color: #666;
+    margin-bottom: 6px;
+}
+
+.product-selling-form input,
+.product-selling-form textarea,
+.product-selling-form select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.9em;
+    color: #333;
+}
+
+.product-selling-form textarea {
+    resize: vertical;
+}
+
+.image-preview {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.image-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.farmer-details-section {
+    margin-top: 30px; /* Space between product details and farmer details */
+}
+
+.farmer-details-section h3 {
+    font-family: 'Poppins', sans-serif;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.submit-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1em;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #218838;
+}
+
+.submit-button[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

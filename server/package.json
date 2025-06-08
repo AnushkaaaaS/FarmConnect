@@ -1,0 +1,19 @@
+{
+  "name": "farmconnect-chat-server",
+  "version": "1.0.0",
+  "description": "Real-time chat server for FarmConnect",
+  "main": "chatServer.js",
+  "scripts": {
+    "start": "node chatServer.js",
+    "dev": "nodemon chatServer.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mongoose": "^7.0.3",
+    "socket.io": "^4.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+} 

@@ -1,0 +1,347 @@
+.about-us-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #ffffff;
+}
+
+.about-us-image {
+    width: 300px; 
+    height: auto;
+    border-radius: 5px;
+}
+
+.dashboard-container {
+    font-family: Arial, sans-serif;
+}
+
+.dashboard-header {
+    text-align: center;
+    padding: 20px;
+    background-color: #4CAF50; /* Green */
+    color: white;
+}
+
+.hero-section {
+    text-align: center;
+    padding: 40px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+}
+
+.shop-now-btn {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.featured-categories {
+    padding: 40px; /* Space around the categories section */
+}
+
+.categories-container {
+    display: flex;
+    justify-content: space-around; /* Space between categories */
+    flex-wrap: wrap; /* Wrap on smaller screens */
+}
+
+.category {
+    background-color: #ffffff; /* White background */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 10px; /* Rounded corners */
+    padding: 20px;
+    margin: 15px;
+    flex: 1 1 250px; /* Responsive flex properties */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Shadow effect */
+    transition: transform 0.3s; /* Transition for hover effect */
+}
+
+.category:hover {
+    transform: translateY(-5px); /* Lift effect on hover */
+}
+
+.category h3 {
+    color: #34495e;
+    font-size: 28px; 
+    font-family:'Poppins', sans-serif; ;
+}
+
+.category p {
+    color: #636e72; /* Grey color for text */
+    font-family: 'Poppins', sans-serif; 
+    font-size: 22px;/* Use Poppins font */
+}
+
+.go-to-sell-btn, .view-products-btn, .view-orders-btn {
+    padding: 10px 20px; /* Button padding */
+    background-color: #4CAF50; /* Green */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem; /* Button text size */
+    transition: background-color 0.3s, transform 0.3s; /* Button hover effect */
+}
+
+.go-to-sell-btn:hover, .view-products-btn:hover, .view-orders-btn:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: translateY(-2px); /* Button lift effect */
+}
+/* Enhanced Subscription Benefits Section */
+/* Enhanced Subscription Benefits Section */
+.subscription-benefits-section {
+    background: linear-gradient(to right, #1e90ff, #4caf50); /* More subtle blue-green gradient */
+    padding: 60px 20px;
+    text-align: center;
+    color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-top: 40px;
+}
+
+.subscription-benefits-section h2 {
+    font-size: 2em;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+}
+
+.subscription-benefits-section p {
+    font-size: 1.1em;
+    line-height: 1.6;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    font-weight: 300;
+    color: #e0e0e0; /* Lighter grey to improve readability */
+}
+
+.subscription-benefits-section ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+}
+
+.subscription-benefits-section ul li {
+    font-size: 1.1em;
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.subscription-benefits-section ul li:before {
+    content: "✔";
+    color: #f9f9f9;
+    margin-right: 10px;
+    font-size: 1.2em;
+}
+
+.view-tools-btn {
+    background-color: #ff9800; /* Bright, yet neutral orange */
+    color: #fff;
+    padding: 14px 30px;
+    font-size: 1.2em;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+}
+
+.view-tools-btn:hover {
+    background-color: #fb8c00; /* Slightly darker orange */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.view-tools-btn:focus {
+    outline: none;
+}
+
+/* Make it responsive */
+@media (max-width: 768px) {
+    .subscription-benefits-section h2 {
+        font-size: 1.8em;
+    }
+
+    .subscription-benefits-section p {
+        font-size: 1em;
+    }
+
+    .view-tools-btn {
+        font-size: 1em;
+        padding: 12px 24px;
+    }
+}  
+
+/* Subscription Section */
+/* Subscription Section */
+.subscription-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    padding: 50px 20px;
+    margin-top: 30px;
+}
+
+.subscription-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+}
+
+.subscription-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.subscription-text {
+    flex: 1;
+    padding: 2rem;
+    color: #333;
+}
+
+.subscription-text h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #2c5530;
+}
+
+.subscription-text p {
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: #666;
+}
+
+.subscription-benefits {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.subscription-benefits li {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+    position: relative;
+    color: #444;
+}
+
+.subscription-benefits li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: #2c5530;
+    font-weight: bold;
+}
+
+.subscribe-btn {
+    padding: 12px 25px;
+    border: none;
+    background-color: #3399cc; /* Removed green box background */
+    color: white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+    width: 200px;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.subscribe-btn:hover {
+    background-color: #287ba2;
+}
+
+@media (max-width: 768px) {
+    .subscription-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .subscription-image {
+        margin-bottom: 20px;
+    }
+
+    .subscription-text {
+        width: 100%;
+    }
+}
+
+.view-tools-btn {
+    background-color: #ff9800; /* Bright, yet neutral orange */
+    color: #fff;
+    padding: 14px 30px;
+    font-size: 1.2em;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+}
+
+.view-tools-btn:hover {
+    background-color: #fb8c00; /* Slightly darker orange */
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.view-tools-btn:focus {
+    outline: none;
+}
+
+/* Make it responsive */
+@media (max-width: 768px) {
+    .subscription-benefits-section h2 {
+        font-size: 1.8em;
+    }
+
+    .subscription-benefits-section p {
+        font-size: 1em;
+    }
+
+    .view-tools-btn {
+        font-size: 1em;
+        padding: 12px 24px;
+    }
+}
+
+.resource-hub-section {
+    padding: 4rem 0;
+    background-color: #f8f9fa;
+    margin: 2rem 0;
+}
+
+.resource-hub-section h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+}
+
+

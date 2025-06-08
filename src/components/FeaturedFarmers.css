@@ -1,0 +1,113 @@
+/* FeaturedFarmers.css */
+.featured-farmers-section {
+    padding: 40px 20px; /* Increased padding for better spacing */
+    background-color: #f4f4f9; /* Lighter background for a softer look */
+}
+
+.featured-farmers-section h2 {
+    text-align: center;
+    font-family: 'Poppins', sans-serif; /* Elegant and modern font */
+    font-size: 2.4rem;
+    font-weight: 600;
+    color: #4a4a4a; /* Darker gray for a clean, modern look */
+    margin-bottom: 30px;
+    letter-spacing: 0.5px;
+}
+
+.featured-farmers-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Max 3 cards per row */
+    gap: 30px; /* Increased gap between cards */
+    justify-items: center;
+    padding: 0 10px; /* Padding to make it more responsive */
+}
+
+.featured-farmer-card {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Soft shadow for a subtle 3D effect */
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.featured-farmer-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15); /* Slightly deeper shadow on hover */
+}
+
+.farmer-image {
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 4px solid #f1f1f1; /* Subtle border around the image */
+}
+
+.farmer-name {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+/* Changed font family for description */
+.farmer-description {
+    font-family: 'Arial', sans-serif; /* Changed font to Arial */
+    font-size: 1rem;
+    color: #6f6f6f;
+    margin-top: 15px;
+    line-height: 1.6;
+    text-align: left; /* Left-aligned text for better readability */
+}
+
+.farmer-description strong {
+    font-weight: 700;
+    color: #333; /* Slightly darker color for emphasis */
+}
+
+.shop-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    font-family: 'Poppins', sans-serif;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-transform: uppercase; /* Button text in uppercase for more impact */
+}
+
+.shop-button:hover {
+    background-color: #218838;
+}
+
+.shop-button:focus {
+    outline: none;
+}
+
+.more-farmers-heading {
+    text-align: center;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.7rem;
+    font-weight: 500;
+    margin-top: 50px;
+    color: #333;
+    letter-spacing: 0.5px;
+}
+
+.more-farmers-description {
+    text-align: center;
+    font-family: 'Lora', serif;
+    font-size: 1.1rem;
+    color: #555;
+    margin-top: 10px;
+    max-width: 750px;
+    margin: 0 auto;
+}

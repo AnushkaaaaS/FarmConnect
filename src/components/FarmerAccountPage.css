@@ -1,0 +1,82 @@
+/* Container for the farmer account page */
+.farmer-account-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #eef2f6;
+    padding: 20px;
+}
+
+/* Profile card styling */
+.account-card {
+    background-color: #fff;
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    position: relative;
+}
+
+/* Larger profile image container */
+.profile-image-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Profile image styling */
+.profile-image-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Heading style for the profile card */
+.profile-heading {
+    font-size: 32px;
+    margin-bottom: 25px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Profile details styling */
+.profile-details p {
+    font-size: 20px;
+    color: #555;
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+/* Strong labels for profile details */
+.profile-details strong {
+    color: #2c3e50;
+    font-weight: bold;
+}
+
+/* Profile card responsiveness */
+@media (max-width: 600px) {
+    .account-card {
+        padding: 30px;
+        max-width: 90%;
+    }
+
+    .profile-heading {
+        font-size: 28px;
+    }
+
+    .profile-details p {
+        font-size: 18px;
+    }
+
+    .profile-image-container {
+        width: 120px;
+        height: 120px;
+    }
+}

@@ -1,0 +1,132 @@
+/* Checkout Page Container */
+.checkout-page-container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.checkout-page-container h1 {
+    text-align: center;
+    font-size: 2em;
+    color: #000000;
+    margin-bottom: 20px;
+}
+
+/* Checkout Content */
+.checkout-content {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+/* Address Section */
+.checkout-section {
+    flex: 1;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.checkout-section h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.checkout-section input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* Review Items */
+.review-items {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+    padding-right: 10px;
+}
+
+.review-item {
+    display: flex;
+    gap: 15px;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    align-items: center;
+}
+
+.review-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.review-item h4 {
+    margin: 0;
+    font-size: 1em;
+    color: #444;
+}
+
+.review-item p {
+    font-size: 0.9em;
+    color: #777;
+}
+
+/* Order Summary */
+.order-summary {
+    margin-top: 15px;
+    padding: 10px 0;
+    border-top: 1px solid #ddd;
+    font-size: 1.2em;
+    text-align: right;
+}
+
+.order-summary .delivery-fee {
+    font-size: 1em;
+    color: #999;
+}
+
+.order-summary h3 {
+    margin-top: 5px;
+    font-size: 1.5em;
+    color: #444;
+}
+
+/* Proceed Button */
+.submit-button {
+    width: 50%;
+    padding: 15px;
+    font-size: 1.2em;
+    background-color: #33cc47;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #2a88b9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .checkout-content {
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,102 @@
+/* Page background */
+.predict-crop-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to bottom, #e0f7fa, #ffffff);
+}
+
+/* Prediction card */
+.predict-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 400px;
+    transition: transform 0.3s ease;
+}
+
+.predict-card:hover {
+    transform: translateY(-5px);
+}
+
+/* Title */
+h1 {
+    font-size: 24px;
+    color: #2c3e50;
+    margin-bottom: 10px;
+}
+
+/* Description text */
+.description {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* Image preview */
+.image-preview {
+    width: 100%;
+    max-height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border: 2px solid #ddd;
+}
+
+/* Custom file input button */
+.file-label {
+    display: inline-block;
+    padding: 10px 15px;
+
+    color: black;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background 0.3s;
+}
+
+.file-label:hover {
+    background: #7c96a6;
+}
+
+.file-input {
+    display: none;
+}
+
+/* Predict button */
+.predict-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    background: #27ae60;
+    color: white;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.predict-btn:hover {
+    background: #219150;
+}
+
+/* Prediction result */
+.prediction-result {
+    margin-top: 1rem;
+    font-weight: bold;
+    color: #333;
+    font-size: 16px;
+}
+
+/* Disease info */
+.disease-info {
+    margin-top: 0.5rem;
+    font-size: 14px;
+    color: #d32f2f;
+    font-weight: bold;
+}

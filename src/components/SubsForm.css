@@ -1,0 +1,12 @@
+.order-summary {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #333;
+    text-align: center;
+}
+
+.order-summary h3 {
+    margin: 5px 0;
+    font-weight: bold;
+    color: #3399cc;
+}
