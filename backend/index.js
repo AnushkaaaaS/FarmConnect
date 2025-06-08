@@ -21,7 +21,7 @@ app.use('/uploads', express.static('uploads')); // Serve static files from the '
 app.use(buyerFAQRouter);
 
 //MongoDB connection
-mongoose.connect('mongodb+srv://farmconnect:farmconnect@cluster0.9nqmz.mongodb.net/farmconnect?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(() => console.log('MongoDB connected'))
