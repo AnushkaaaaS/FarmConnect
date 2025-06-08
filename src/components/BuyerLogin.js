@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import buyerBackground from '../assets/buyerpagebck.avif';
-import { fetchFromApi } from '../api'; // Make sure the path is correct
 
 const buttonStyle = {
   width: '300px',
@@ -34,7 +33,7 @@ const BuyerLogin = () => {
     }
 
     try {
-      const response = await fetchFromApi('/api/login', {
+      const response = await fetch('https://farmconnect-by0t.onrender.com/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

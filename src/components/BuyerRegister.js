@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import buyerBackground from '../assets/buyerpagebck.avif';
-import { fetchFromApi } from '../api'; // ✅ import your custom fetch wrapper
 
 const buttonStyle = {
   width: '300px',
@@ -60,7 +59,7 @@ const BuyerRegister = () => {
 
     setError('');
     try {
-      const response = await fetchFromApi('/api/register', {
+      const response = await fetch('https://farmconnect-by0t.onrender.com/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
