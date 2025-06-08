@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './YourProducts.css';
 import FarmerNavBar from './FarmerNavBar';
+import { fetchFromApi } from '../api';  // import your helper
+
 
 const YourProducts = () => {
     const [products, setProducts] = useState([]);
@@ -15,7 +17,7 @@ const YourProducts = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetch('http://localhost:5000/api/your-products', {
+            const response = await fetchFromApi('api/your-products', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -43,7 +45,7 @@ const YourProducts = () => {
         if (!confirmDelete) return; // If the user cancels, do nothing
 
         try {
-            const response = await fetch(`http://localhost:5000/api/products/${id}`, {
+            const response = await fetchFromApi(`api/products/${id}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,

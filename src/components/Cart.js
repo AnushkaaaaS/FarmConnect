@@ -4,16 +4,16 @@ import './Cart.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BuyerNavBar from './BuyerNavBar';
+import { fetchFromApi } from '../api'; // ✅ import centralized helper
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [isSubscribed, setIsSubscribed] = useState(false); // Add state for subscription status
+    const [isSubscribed, setIsSubscribed] = useState(false);
     const navigate = useNavigate();
     const deliveryFee = 45;
     const freeDeliveryThreshold = 300;
 
-    // Load cart items from backend
     useEffect(() => {
         const fetchCartItems = async () => {
             const token = localStorage.getItem('token');
@@ -24,21 +24,17 @@ const Cart = () => {
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/cart', {
+                const response = await fetchFromApi('/api/cart', {
                     method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch cart items');
-                }
-
+                if (!response.ok) throw new Error('Failed to fetch cart items');
                 const data = await response.json();
+
                 if (data.success) {
                     setCartItems(data.cartItems);
-                    calculateTotalPrice(data.cartItems); // Calculate initial total
+                    calculateTotalPrice(data.cartItems);
                 } else {
                     toast.error(data.message);
                 }
@@ -53,16 +49,14 @@ const Cart = () => {
             if (!token) return;
 
             try {
-                const response = await fetch('http://localhost:5000/api/user/status', {
+                const response = await fetchFromApi('/api/user/status', {
                     method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    },
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    setIsSubscribed(data.is_subscribed); // Update subscription status
+                    setIsSubscribed(data.is_subscribed);
                 }
             } catch (error) {
                 console.error('Error fetching subscription status:', error);
@@ -70,80 +64,64 @@ const Cart = () => {
         };
 
         fetchCartItems();
-        fetchUserSubscriptionStatus(); // Fetch subscription status
+        fetchUserSubscriptionStatus();
     }, [navigate]);
 
-    // Function to calculate total price
     const calculateTotalPrice = (items) => {
-        const total = items.reduce((acc, item) => {
-            return acc + (item.productId.price * item.quantity);
-        }, 0);
+        const total = items.reduce((acc, item) => acc + (item.productId.price * item.quantity), 0);
         setTotalPrice(total);
     };
 
-    // Function to remove item from cart
     const removeFromCart = async (id) => {
         const token = localStorage.getItem('token');
-        console.log("Attempting to remove item with ID:", id); // Log the ID being removed
-    
-        // Optimistically update the cart state before sending the request
-        const updatedItems = cartItems.filter(item => item._id !== id); // Use item._id instead of item.productId._id
+        const updatedItems = cartItems.filter(item => item._id !== id);
         setCartItems(updatedItems);
         calculateTotalPrice(updatedItems);
-        toast.success('Item removed from cart!'); // Immediate feedback
-    
+        toast.success('Item removed from cart!');
+
         try {
-            const response = await fetch(`http://localhost:5000/api/cart/${id}`, { // Ensure you're passing the correct ID
+            const response = await fetchFromApi(`/api/cart/${id}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                },
+                headers: { 'Authorization': `Bearer ${token}` }
             });
-    
+
             if (!response.ok) {
                 const errorData = await response.json();
-                console.error('Failed to remove item:', errorData); // Log detailed error
-                throw new Error(errorData.message || 'Failed to remove item from cart');
+                throw new Error(errorData.message || 'Failed to remove item');
             }
-    
+
             const data = await response.json();
             if (!data.success) {
-                toast.error(data.message); // Show error from server response
-                // If server error, revert cart state back
-                setCartItems(cartItems); // Reset to original items
+                toast.error(data.message);
+                setCartItems(cartItems); // revert
                 calculateTotalPrice(cartItems);
-            } else {
-                console.log(`Item with ID ${id} successfully removed from the cart.`);
             }
         } catch (error) {
             console.error('Error removing cart item:', error);
             toast.error('Failed to remove item from cart. Please try again.');
-            // Revert the cart items if an error occurs
-            setCartItems(cartItems); // Reset to original items
+            setCartItems(cartItems); // revert
             calculateTotalPrice(cartItems);
         }
     };
 
-    // Function to update quantity on backend
     const updateQuantityOnBackend = async (id, newQuantity) => {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`http://localhost:5000/api/cart`, {
+            const response = await fetchFromApi('/api/cart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify({ productId: id, quantity: newQuantity }), // Sending the exact new quantity
+                body: JSON.stringify({ productId: id, quantity: newQuantity })
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to update quantity on backend');
+                throw new Error(errorData.message || 'Failed to update quantity');
             }
 
-            const data = await response.json();
-            return data;
+            return await response.json();
         } catch (error) {
             console.error('Error updating quantity:', error);
             toast.error("Failed to update quantity. Please try again.");
@@ -151,36 +129,32 @@ const Cart = () => {
         }
     };
 
-    // Update quantity function
     const updateQuantity = async (id, newQuantity) => {
         if (newQuantity < 1) {
-            toast.error("Quantity must be at least 1."); // Show error if quantity is less than 1
+            toast.error("Quantity must be at least 1.");
             return;
         }
 
         const updatedItems = cartItems.map(item =>
-            item.productId._id === id ? { ...item, quantity: newQuantity } : item // Set to newQuantity directly
+            item.productId._id === id ? { ...item, quantity: newQuantity } : item
         );
         setCartItems(updatedItems);
-        calculateTotalPrice(updatedItems); // Recalculate total price
+        calculateTotalPrice(updatedItems);
 
-        const response = await updateQuantityOnBackend(id, newQuantity); // Pass the new quantity
+        const response = await updateQuantityOnBackend(id, newQuantity);
         if (!response || !response.success) {
             const revertItems = cartItems.map(item =>
                 item.productId._id === id ? { ...item, quantity: cartItems.find(i => i.productId._id === id).quantity } : item
             );
             setCartItems(revertItems);
-            calculateTotalPrice(revertItems); // Recalculate total price
+            calculateTotalPrice(revertItems);
         }
     };
 
-    // Function to handle proceed to checkout
-    const handleCheckout = async () => {
-      navigate('/api/checkout')
-    }
-       
+    const handleCheckout = () => {
+        navigate('/api/checkout');
+    };
 
-    // Calculate delivery charge based on subscription status
     const deliveryCharge = isSubscribed ? 0 : (totalPrice > freeDeliveryThreshold ? 0 : deliveryFee);
 
     return (
@@ -200,7 +174,11 @@ const Cart = () => {
                             <div className="cart-items">
                                 {cartItems.map(item => (
                                     <div key={item.productId._id} className="cart-item">
-                                        <img src={item.productId.imageUrl ? `http://localhost:5000/${item.productId.imageUrl}` : 'path/to/fallback-image.png'} alt={item.productId.name} className="cart-item-image" />
+                                        <img
+                                            src={item.productId.imageUrl ? `http://localhost:5000/${item.productId.imageUrl}` : 'fallback.png'}
+                                            alt={item.productId.name}
+                                            className="cart-item-image"
+                                        />
                                         <div className="cart-item-details">
                                             <h3>{item.productId.name}</h3>
                                             <p>Price: ₹{item.productId.price} / {item.productId.unit}</p>
@@ -232,7 +210,6 @@ const Cart = () => {
                                     <p>₹{(totalPrice + deliveryCharge).toFixed(2)}</p>
                                 </div>
 
-                                {/* Conditional delivery messages based on subscription status */}
                                 {!isSubscribed && totalPrice < freeDeliveryThreshold && (
                                     <p className="free-delivery-message">Free delivery on orders above ₹300. <strong>Subscribe to waive delivery fees!</strong></p>
                                 )}

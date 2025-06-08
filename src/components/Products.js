@@ -18,7 +18,7 @@ const Products = () => {
 
     useEffect(() => {
         const fetchProducts = async () => {
-            const response = await fetch(`http://localhost:5000/api/products?category=${category}`);
+            const response = await fetch(`https://farmconnect-by0t.onrender.com/api/products?category=${category}`);
             const data = await response.json();
             if (data.success) {
                 setProducts(data.products);
@@ -44,7 +44,7 @@ const Products = () => {
 
     const fetchFarmerDetails = async (productId) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/products/${productId}/farmer-details`);
+            const response = await fetch(`https://farmconnect-by0t.onrender.com/api/products/${productId}/farmer-details`);
             const data = await response.json();
             if (data.success) {
                 setFarmerDetails(data.farmerDetails);
@@ -64,7 +64,7 @@ const Products = () => {
             return;
         }
         try {
-            const response = await fetch('http://localhost:5000/api/cart', {
+            const response = await fetch('https://farmconnect-by0t.onrender.com/api/cart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -120,7 +120,7 @@ const Products = () => {
                         {products.length > 0 ? (
                             products.map((product) => (
                                 <div key={product._id} className="product-card">
-                                    <img src={`http://localhost:5000/${product.imageUrl}`} alt={product.name} className="product-image" />
+                                    <img src={`https://farmconnect-by0t.onrender.com/${product.imageUrl}`} alt={product.name} className="product-image" />
                                     <div className="product-details">
                                         <h3>{product.name}</h3>
                                         <select 

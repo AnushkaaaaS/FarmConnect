@@ -37,7 +37,7 @@ const FarmerRegister = () => {
     setLoading(true);
   
     try {
-      const response = await fetch('http://localhost:5000/api/farmer-register', {
+      const response = await fetch('https://farmconnect-by0t.onrender.com/api/farmer-register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -4,6 +4,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BuyerNavBar from './BuyerNavBar';
 import './YourOrders.css';
+import { fetchFromApi } from '../api';  // import your helper
+
 
 const YourOrders = () => {
     const [orders, setOrders] = useState([]);
@@ -19,7 +21,7 @@ const YourOrders = () => {
             }
 
             try {
-                const response = await fetch('http://localhost:5000/api/orders', {
+                const response = await fetchFromApi('api/orders', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -71,7 +73,7 @@ const YourOrders = () => {
                                             <div className="item-image">
                                                 <img src={
                                         item.productId.imageUrl
-                                            ? `http://localhost:5000/${item.productId.imageUrl}`
+                                            ? `https://farmconnect-by0t.onrender.com/${item.productId.imageUrl}`
                                             : 'path/to/fallback-image.png'
                                     }  />
                                             </div>

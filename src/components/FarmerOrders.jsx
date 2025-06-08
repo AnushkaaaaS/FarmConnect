@@ -15,7 +15,7 @@ const FarmerOrders = () => {
         const fetchOrders = async () => {
             const token = localStorage.getItem('token');
             try {
-                const response = await fetch('http://localhost:5000/api/farmer-orders', {
+                const response = await fetch('https://farmconnect-by0t.onrender.com/api/farmer-orders', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -51,7 +51,7 @@ const FarmerOrders = () => {
         if (newStatus && newStatus !== currentStatus) {
             const token = localStorage.getItem('token');
             try {
-                const response = await fetch(`http://localhost:5000/api/update-order-status/${orderId}`, {
+                const response = await fetch(`https://farmconnect-by0t.onrender.com/api/update-order-status/${orderId}`, {
                     method: 'PUT',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -97,7 +97,7 @@ const FarmerOrders = () => {
                                     className="product-image"
                                     src={
                                         item.productId.imageUrl
-                                            ? `http://localhost:5000/${item.productId.imageUrl}`
+                                            ? `https://farmconnect-by0t.onrender.com/${item.productId.imageUrl}`
                                             : 'path/to/fallback-image.png'
                                     }
                                     alt={item.productId.name}

@@ -20,7 +20,7 @@ const FarmerNavBar = ({ onLogout }) => {
                     return;
                 }
         
-                const response = await fetch('http://localhost:5000/api/farmer/status', {
+                const response = await fetch('https://farmconnect-by0t.onrender.com/api/farmer/status', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`

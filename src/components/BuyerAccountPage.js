@@ -3,16 +3,16 @@ import './BuyerAccountPage.css'; // Custom CSS for BuyerAccountPage
 import BuyerNavBar from './BuyerNavBar'; // Import BuyerNavBar component
 import buyerIcon from './assets/buyer.jpg'; // Default buyer icon image
 import { useNavigate } from 'react-router-dom'; // For navigation
+import { fetchFromApi } from '../api'; // adjust if path differs
 
 const BuyerAccountPage = () => {
     const [buyer, setBuyer] = useState(null);
     const navigate = useNavigate();
 
-    // Fetch buyer details from backend using email from localStorage
     useEffect(() => {
         const buyerFromStorage = JSON.parse(localStorage.getItem('buyer'));
         if (buyerFromStorage && buyerFromStorage.email) {
-            fetch(`http://localhost:5000/api/buyer-details?email=${buyerFromStorage.email}`)
+            fetchFromApi(`/api/buyer-details?email=${buyerFromStorage.email}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {
@@ -27,21 +27,18 @@ const BuyerAccountPage = () => {
         }
     }, []);
 
-    // Handle logout functionality
     const handleLogout = () => {
-        localStorage.removeItem('buyer'); // Clear buyer data from local storage
-        navigate('/'); // Redirect to homepage after logout
+        localStorage.removeItem('buyer');
+        navigate('/');
     };
 
     return (
         <>
-            {/* Reuse BuyerNavBar with logout functionality */}
             <BuyerNavBar onLogout={handleLogout} />
 
             <div className="buyer-account-container">
                 {buyer ? (
                     <div className="account-card">
-                        {/* Buyer Icon */}
                         <div className="profile-image-container">
                             <img src={buyerIcon} alt="Buyer Profile" />
                         </div>

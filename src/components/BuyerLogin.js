@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import buyerBackground from './assets/buyerpagebck.avif';
+import { fetchFromApi } from '../api'; // Make sure the path is correct
 
 const buttonStyle = {
   width: '300px',
@@ -23,42 +23,38 @@ const BuyerLogin = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-  
+
     if (!email || !password) {
       setError('Please fill in both fields');
       return;
     }
-  
+
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetchFromApi('/api/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ email, password }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
-  
+
       const data = await response.json();
-  
+
       if (data.success) {
-        // Storing the buyer data and token in localStorage
         localStorage.setItem('buyer', JSON.stringify(data.buyer));
-        localStorage.setItem('token', data.token); // Store JWT token
-        console.log(data.token)
-  
+        localStorage.setItem('token', data.token);
+        console.log(data.token);
+
         toast.success('Login successful!', { position: "top-center", autoClose: 2000 });
-        setTimeout(() => {
-          navigate('/buyer-dashboard'); // Redirecting to buyer dashboard
-        }, 2000);
+        setTimeout(() => navigate('/buyer-dashboard'), 2000);
       } else {
         setError(data.message || 'Invalid email or password');
       }
@@ -67,7 +63,7 @@ const BuyerLogin = () => {
       console.error('Error:', error);
     }
   };
-  
+
   return (
     <div style={{
       position: 'relative',

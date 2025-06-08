@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import io from 'socket.io-client';
 import './Chat.css';
+import { fetchFromApi } from '../api'; // ✅ Import your API utility
 
 const Chat = ({ userType, userId, userName }) => {
     const [socket, setSocket] = useState(null);
@@ -12,23 +13,19 @@ const Chat = ({ userType, userId, userName }) => {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        const newSocket = io('http://localhost:5000');
+        const newSocket = io(process.env.REACT_APP_API_URL); // ✅ dynamic socket URL
         setSocket(newSocket);
 
-        // Join user's room
         newSocket.emit('join', { userId, userType });
 
-        // Listen for online users
         newSocket.on('onlineUsers', (users) => {
             setOnlineUsers(users);
         });
 
-        // Listen for new messages
         newSocket.on('message', (message) => {
             setMessages(prev => [...prev, message]);
         });
 
-        // Load previous messages
         fetchPreviousMessages();
 
         return () => newSocket.close();
@@ -36,11 +33,21 @@ const Chat = ({ userType, userId, userName }) => {
 
     const fetchPreviousMessages = async () => {
         try {
-            const response = await fetch(`http://localhost:5000/api/messages/${userId}`);
+            const response = await fetchFromApi(`/api/messages/${userId}`);
             const data = await response.json();
             setMessages(data);
         } catch (error) {
             console.error('Error fetching messages:', error);
+        }
+    };
+
+    const fetchUserMessages = async (otherUserId) => {
+        try {
+            const response = await fetchFromApi(`/api/messages/${userId}/${otherUserId}`);
+            const data = await response.json();
+            setMessages(data);
+        } catch (error) {
+            console.error('Error fetching user messages:', error);
         }
     };
 
@@ -75,18 +82,7 @@ const Chat = ({ userType, userId, userName }) => {
 
     const selectUser = (user) => {
         setSelectedUser(user);
-        // Fetch messages with this user
         fetchUserMessages(user.id);
-    };
-
-    const fetchUserMessages = async (otherUserId) => {
-        try {
-            const response = await fetch(`http://localhost:5000/api/messages/${userId}/${otherUserId}`);
-            const data = await response.json();
-            setMessages(data);
-        } catch (error) {
-            console.error('Error fetching user messages:', error);
-        }
     };
 
     return (
@@ -160,4 +156,4 @@ const Chat = ({ userType, userId, userName }) => {
     );
 };
 
-export default Chat; 
+export default Chat;

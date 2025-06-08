@@ -8,7 +8,7 @@ const FeaturedFarmers = () => {
   useEffect(() => {
     const fetchFeaturedFarmers = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/featured-farmers');
+        const response = await fetch('https://farmconnect-by0t.onrender.com/api/featured-farmers');
         const data = await response.json();
         setFeaturedFarmers(data);
       } catch (error) {

@@ -26,7 +26,7 @@ const FarmerLogin = () => {
 
     try {
         // Call the correct farmer login API endpoint
-        const response = await fetch('http://localhost:5000/api/farmer-login', {
+        const response = await fetch('https://farmconnect-by0t.onrender.com/api/farmer-login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

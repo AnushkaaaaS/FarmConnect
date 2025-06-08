@@ -2,24 +2,25 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { fetchFromApi } from '../api'; // adjust path if api.js is in another folder
 import './Admin.css'; // CSS file for styling
 
 function AdminDashboardPage() {
-    const [buyers, setBuyers] = useState([]); // State for buyers
-    const [farmers, setFarmers] = useState([]); // State for farmers
+    const [buyers, setBuyers] = useState([]);
+    const [farmers, setFarmers] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const navigate = useNavigate(); // Ensure this is called unconditionally
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserSubscriptions = async () => {
             try {
-                const response = await fetch('http://localhost:5000/admin-page');
+                const response = await fetchFromApi('/admin-page');
                 if (response.ok) {
                     const data = await response.json();
-                    console.log(data); // Debug: Check data structure
-                    setBuyers(data.buyers || []); // Set only buyers data
-                    setFarmers(data.farmers || []); // Set only farmers data
+                    console.log(data);
+                    setBuyers(data.buyers || []);
+                    setFarmers(data.farmers || []);
                 } else {
                     console.error('Failed to fetch subscriptions');
                 }
@@ -33,22 +34,20 @@ function AdminDashboardPage() {
         fetchUserSubscriptions();
     }, []);
 
+    const handleLogout = () => {
+        localStorage.removeItem('admin');
+        navigate('/');
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
 
-    // Handle Logout
-    const handleLogout = () => {
-        localStorage.removeItem('admin'); // Remove admin data from localStorage
-        navigate('/'); // Redirect to the homepage after logout
-    };
-
     return (
         <div className="admin-dashboard">
-            {/* Navbar */}
             <nav className="navbar">
                 <div className="navbar-logo" onClick={() => navigate('/admin-dashboard')}>
-                    <h2>FarmConnect</h2> {/* Acts as a home link to admin dashboard */}
+                    <h2>FarmConnect</h2>
                 </div>
                 <ul className="navbar-links">
                     <li onClick={handleLogout}>
@@ -59,7 +58,6 @@ function AdminDashboardPage() {
 
             <h1>Admin Dashboard</h1>
             <div className="table-container">
-                {/* Buyers Table */}
                 <h2>Buyers</h2>
                 <table>
                     <thead>
@@ -88,7 +86,6 @@ function AdminDashboardPage() {
                     </tbody>
                 </table>
 
-                {/* Farmers Table */}
                 <h2>Farmers</h2>
                 <table>
                     <thead>

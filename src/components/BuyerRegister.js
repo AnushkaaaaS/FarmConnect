@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import buyerBackground from './assets/buyerpagebck.avif';
+import { fetchFromApi } from '../api'; // ✅ import your custom fetch wrapper
 
 const buttonStyle = {
   width: '300px',
@@ -34,35 +34,33 @@ const BuyerRegister = () => {
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const validateInputs = () => {
+    const { phoneNumber, password, confirmPassword } = formData;
+    if (!/^\d{10}$/.test(phoneNumber)) return 'Phone number must be exactly 10 digits.';
+    if (password.length < 8) return 'Password must be at least 8 characters long.';
+    if (password !== confirmPassword) return 'Passwords do not match.';
+    return '';
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!/^\d{10}$/.test(formData.phoneNumber)) {
-      setError('Phone number must be exactly 10 digits!');
-      return;
-    }
-
-    if (formData.password.length < 8) {
-      setError('Password must be at least 8 characters long!');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match!');
+    const validationError = validateInputs();
+    if (validationError) {
+      setError(validationError);
+      toast.error(validationError, { position: 'top-center', autoClose: 2500 });
       return;
     }
 
     setError('');
-
     try {
-      const response = await fetch('http://localhost:5000/api/register', {
+      const response = await fetchFromApi('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -72,23 +70,29 @@ const BuyerRegister = () => {
 
       const data = await response.json();
 
-      if (response.status === 400) {
-        setError(data.message); // Display error message from the server
-        toast.error(data.message, { position: "top-center", autoClose: 2000 });
-      } else if (data.success) {
-        localStorage.setItem('buyerToken', data.token); // Store token for authenticated requests
+      if (!response.ok) {
+        const message = data.message || 'Registration failed.';
+        setError(message);
+        toast.error(message, { position: 'top-center', autoClose: 2500 });
+        return;
+      }
+
+      if (data.success) {
         toast.success('Registration successful!', {
-          position: "top-center",
+          position: 'top-center',
           autoClose: 2000,
         });
 
-        setTimeout(() => {
-          navigate('/buyer-login'); // Navigate to login page after registration
-        }, 2000);
+        localStorage.setItem('buyerToken', data.token);
+
+        setTimeout(() => navigate('/buyer-login'), 2000);
       }
-    } catch (error) {
-      setError('An error occurred. Please try again.');
-      console.error('Error:', error);
+    } catch (err) {
+      console.error('Registration Error:', err);
+      toast.error('Something went wrong. Please try again.', {
+        position: 'top-center',
+        autoClose: 2500,
+      });
     }
   };
 
@@ -126,69 +130,18 @@ const BuyerRegister = () => {
           Buyer Registration
         </h2>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column' }}>
-          <input
-            type="text"
-            name="firstName"
-            placeholder="First Name"
-            value={formData.firstName}
-            onChange={handleChange}
-            style={{ margin: '10px', padding: '10px', width: '300px' }}
-            required
-          />
-          <input
-            type="text"
-            name="lastName"
-            placeholder="Last Name"
-            value={formData.lastName}
-            onChange={handleChange}
-            style={{ margin: '10px', padding: '10px', width: '300px' }}
-            required
-          />
-          <input
-            type="text"
-            name="address"
-            placeholder="Address"
-            value={formData.address}
-            onChange={handleChange}
-            style={{ margin: '10px', padding: '10px', width: '300px' }}
-            required
-          />
-          <input
-            type="tel"
-            name="phoneNumber"
-            placeholder="Phone Number"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-            style={{ margin: '10px', padding: '10px', width: '300px' }}
-            required
-          />
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            style={{ margin: '10px', padding: '10px', width: '300px' }}
-            required
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            style={{ margin: '10px', padding: '10px', width: '300px' }}
-            required
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            style={{ margin: '10px', padding: '10px', width: '300px' }}
-            required
-          />
+          {['firstName', 'lastName', 'address', 'phoneNumber', 'email', 'password', 'confirmPassword'].map((field, idx) => (
+            <input
+              key={idx}
+              type={field.includes('password') ? 'password' : (field === 'email' ? 'email' : 'text')}
+              name={field}
+              placeholder={field.replace(/([A-Z])/g, ' $1').trim()}
+              value={formData[field]}
+              onChange={handleChange}
+              style={{ margin: '10px', padding: '10px', width: '300px' }}
+              required
+            />
+          ))}
           {error && <p style={{ color: 'red' }}>{error}</p>}
           <button type="submit" style={buttonStyle}>Register</button>
         </form>
