@@ -77,7 +77,7 @@ const BuyerSubscriptionPage = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:5000/api/subscribe', {
+            const response = await fetch('https://farmconnect-by0t.onrender.com/api/subscribe', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

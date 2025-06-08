@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import farmerBackground from './assets/farmerpagebck.jpg'; // Ensure correct path
+import farmerBackground from '../assets/farmerpagebck.jpg'; // Ensure correct path
 
 const buttonStyle = {
   width: '250px',

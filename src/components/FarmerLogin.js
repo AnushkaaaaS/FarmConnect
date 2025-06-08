@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // for redirecting after login
-import farmerLoginBackground from './assets/farmerpagebck.jpg'; // Import your background image
+import farmerLoginBackground from '../assets/farmerpagebck.jpg'; // Import your background image
 import { toast, ToastContainer } from 'react-toastify'; // Import toast for notifications
 import 'react-toastify/dist/ReactToastify.css'; // Toastify styles
 
