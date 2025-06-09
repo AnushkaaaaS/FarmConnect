@@ -574,9 +574,9 @@ app.post('/api/farmer-login', async (req, res) => {
 });
 
 app.post('/generate-content', async (req, res) => {
-  const userPrompt = req.body.contents;
-
   try {
+    const { model, contents } = req.body;
+    
     const response = await axios.post(
       'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
       {
@@ -584,11 +584,11 @@ app.post('/generate-content', async (req, res) => {
           {
             parts: [
               {
-                text: userPrompt,
-              },
-            ],
-          },
-        ],
+                text: contents
+              }
+            ]
+          }
+        ]
       },
       {
         headers: {
@@ -599,12 +599,11 @@ app.post('/generate-content', async (req, res) => {
         },
       }
     );
-
-    const text = response.data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from Gemini.';
-    res.json({ text });
-  } catch (err) {
-    console.error('Gemini API error:', err.response?.data || err.message);
-    res.status(500).json({ error: 'Failed to fetch from Gemini API' });
+    
+    res.json({ text: response.data.candidates[0].content.parts[0].text });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Failed to generate content' });
   }
 });
 
