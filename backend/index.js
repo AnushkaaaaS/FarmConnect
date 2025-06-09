@@ -577,8 +577,18 @@ app.post('/generate-content', async (req, res) => {
   try {
     const { model, contents } = req.body;
     
+    // Validate input
+    if (!contents || typeof contents !== 'string') {
+      return res.status(400).json({ error: 'Invalid content format' });
+    }
+
+    // Determine the appropriate Gemini model
+    const geminiModel = model === 'gemini-2.0-flash' ? 
+      'gemini-1.5-flash' : // Update to current model name
+      'gemini-pro';
+
     const response = await axios.post(
-      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+      `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent`,
       {
         contents: [
           {
@@ -599,11 +609,23 @@ app.post('/generate-content', async (req, res) => {
         },
       }
     );
+
+    // Handle Gemini response safely
+    const geminiResponse = response.data;
+    if (!geminiResponse.candidates || !geminiResponse.candidates[0].content.parts[0].text) {
+      throw new Error('Invalid response structure from Gemini API');
+    }
     
-    res.json({ text: response.data.candidates[0].content.parts[0].text });
+    res.json({ 
+      text: geminiResponse.candidates[0].content.parts[0].text,
+      modelUsed: geminiModel // Optional: send back which model was used
+    });
   } catch (error) {
     console.error('Error:', error);
-    res.status(500).json({ error: 'Failed to generate content' });
+    res.status(500).json({ 
+      error: 'Failed to generate content',
+      details: error.message // Send error details to frontend
+    });
   }
 });
 
