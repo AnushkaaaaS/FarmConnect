@@ -4,7 +4,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BuyerNavBar from './BuyerNavBar';
 import './YourOrders.css';
-import { fetchFromApi } from '../api';  // import your helper
 
 
 const YourOrders = () => {
@@ -21,7 +20,7 @@ const YourOrders = () => {
             }
 
             try {
-                const response = await fetchFromApi('api/orders', {
+                const response = await fetch('https://farmconnect-by0t.onrender.com/api/orders', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,

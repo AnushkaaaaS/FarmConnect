@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './YourProducts.css';
 import FarmerNavBar from './FarmerNavBar';
-import { fetchFromApi } from '../api';  // import your helper
 
 
 const YourProducts = () => {
@@ -17,7 +16,7 @@ const YourProducts = () => {
 
     const fetchProducts = async () => {
         try {
-            const response = await fetchFromApi('api/your-products', {
+            const response = await fetch('https://farmconnect-by0t.onrender.com/api/your-products', {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -45,7 +44,7 @@ const YourProducts = () => {
         if (!confirmDelete) return; // If the user cancels, do nothing
 
         try {
-            const response = await fetchFromApi(`api/products/${id}`, {
+            const response = await fetch(`https://farmconnect-by0t.onrender.comapi/products/${id}`, {
                 method: 'DELETE',
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -71,7 +70,7 @@ const YourProducts = () => {
             <div className="product-list">
                 {products.map((product) => (
                     <div className="product-card" key={product._id}>
-                        <img src={`http://localhost:5000/${product.imageUrl}`} alt={product.name} />
+                        <img src={`https://farmconnect-by0t.onrender.com/${product.imageUrl}`} alt={product.name} />
                         <h2>{product.name}</h2>
                         <p className="description">{product.description}</p>
                         <p className="price">Price: ₹{product.price}</p>

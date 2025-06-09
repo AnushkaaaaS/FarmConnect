@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { fetchFromApi } from '../api';  // Adjust path if needed
 import './ChatBot.css';
 
-const API_KEY = process.env.REACT_APP_GEMINI_API_KEY;  // If needed for headers
+const API_KEY = process.env.REACT_API_GEMINI_API_KEY;  // If needed for headers
 
 const ChatBot = () => {
   const [messages, setMessages] = useState([]);
@@ -157,7 +156,7 @@ Provide a detailed and practical response using the following format:
 Use markdown formatting for better readability. Make important terms bold using ** **.`
       };
 
-      const response = await fetchFromApi('/generate-content', {
+      const response = await fetch('https://farmconnect-by0t.onrender.com/generate-content', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -180,7 +179,7 @@ Use markdown formatting for better readability. Make important terms bold using 
           contents: `Translate this farming advice to ${language}, keeping the technical terms in English where appropriate. Maintain the markdown formatting (###, -, **, etc.) in the translation: "${englishText}"`
         };
 
-        const translationResponse = await fetchFromApi('/generate-content', {
+        const translationResponse = await fetch('https://farmconnect-by0t.onrender.com/generate-content', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

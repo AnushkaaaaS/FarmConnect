@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faUser, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 import './BuyerNavBar.css';
 import SubscribedLabel from './SubscribedLabel';
-import { fetchFromApi } from '../api'; // Adjust the path if necessary
 
 const BuyerNavBar = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
@@ -20,7 +19,7 @@ const BuyerNavBar = () => {
           return;
         }
 
-        const response = await fetchFromApi('/api/user/status', {
+        const response = await fetch('https://farmconnect-by0t.onrender.com/api/user/status', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`

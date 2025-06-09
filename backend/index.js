@@ -15,7 +15,10 @@ const buyerFAQRouter = require('./routes/buyerFAQ');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/uploads', express.static('uploads')); // Serve static files from the 'uploads' directory
+
+// Serve uploads statically
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 // Use the buyer FAQ router
 app.use(buyerFAQRouter);
@@ -570,10 +573,46 @@ app.post('/api/farmer-login', async (req, res) => {
   }
 });
 
+app.post('/generate-content', async (req, res) => {
+  const userPrompt = req.body.contents;
+
+  try {
+    const response = await axios.post(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent',
+      {
+        contents: [
+          {
+            parts: [
+              {
+                text: userPrompt,
+              },
+            ],
+          },
+        ],
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        params: {
+          key: process.env.GEMINI_API_KEY,
+        },
+      }
+    );
+
+    const text = response.data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from Gemini.';
+    res.json({ text });
+  } catch (err) {
+    console.error('Gemini API error:', err.response?.data || err.message);
+    res.status(500).json({ error: 'Failed to fetch from Gemini API' });
+  }
+});
 
 app.post('/api/products', farmerOnly, upload.single('productImage'), async (req, res) => {
   const { id, name, description, price, unit, category, quantity } = req.body;
-  const imageUrl = req.file ? req.file.path : null;
+  
+  // Full image URL accessible from frontend
+  const imageUrl = req.file ? `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` : null;
 
   if (!name || !description || !price || !unit || !category || !quantity) {
       return res.status(400).json({ success: false, message: 'All fields are required' });
@@ -585,6 +624,9 @@ app.post('/api/products', farmerOnly, upload.single('productImage'), async (req,
 
       let product;
       if (id) {
+          product = await Product.findById(id);
+          const updatedImageUrl = imageUrl || product.imageUrl;
+
           product = await Product.findByIdAndUpdate(
               id,
               {
@@ -594,7 +636,7 @@ app.post('/api/products', farmerOnly, upload.single('productImage'), async (req,
                   unit,
                   category,
                   quantity,
-                  imageUrl: imageUrl || product.imageUrl,
+                  imageUrl: updatedImageUrl,
                   farmerId: farmer._id,
               },
               { new: true }
@@ -619,6 +661,7 @@ app.post('/api/products', farmerOnly, upload.single('productImage'), async (req,
       res.status(500).json({ success: false, message: 'Error processing product', error: error.message || 'Internal Server Error' });
   }
 });
+
 
 
 

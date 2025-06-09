@@ -7,7 +7,6 @@ import FeaturedFarmers from './FeaturedFarmers';
 import Footer from './Footer';
 import BuyerFAQChatbot from './buyer/BuyerFAQChatbot';
 import Chat from './Chat';
-import { fetchFromApi } from '../api'; // make sure path is correct
 
 const BuyerDashboard = () => {
     const navigate = useNavigate();
@@ -25,7 +24,7 @@ const BuyerDashboard = () => {
                     return;
                 }
 
-                const response = await fetchFromApi('/api/user/status', {
+                const response = await fetch('https://farmconnect-by0t.onrender.com/api/user/status', {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,

@@ -1,9 +1,11 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"  # Disable GPU before importing TF
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 import numpy as np
-import os
 
 app = Flask(__name__)
 CORS(app)  # ✅ Allow frontend access
@@ -27,30 +29,26 @@ def preprocess_image(img_path):
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    if "file" not in request.files:  # ✅ Fix key mismatch
-        print("🚨 No file received!")  # Debugging
+    if "file" not in request.files:
+        print("🚨 No file received!")
         return jsonify({"error": "No file provided"}), 400
 
-    file = request.files["file"]  # ✅ Match frontend key
+    file = request.files["file"]
     file_path = os.path.join(UPLOAD_FOLDER, file.filename)
     
-    # Save the image
-    file.save(file_path)  
-    print(f"✅ File saved at: {file_path}")  # Debugging
+    file.save(file_path)
+    print(f"✅ File saved at: {file_path}")
 
-    # Preprocess and predict
     img_array = preprocess_image(file_path)
     predictions = model.predict(img_array)
 
-    # Get class labels
-    class_labels = ["Healthy", "Rotten"]  # Adjust according to dataset labels
+    class_labels = ["Healthy", "Rotten"]  # Adjust if different
     predicted_label = class_labels[np.argmax(predictions)]
 
-    # Clean up uploaded file
     os.remove(file_path)
-    print("🗑️ File deleted after processing")  # Debugging
+    print("🗑️ File deleted after processing")
 
     return jsonify({"prediction": predicted_label, "confidence": float(np.max(predictions))})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)  # ✅ Enable debug mode for logs
+    app.run(host="0.0.0.0", port=5000, debug=True)

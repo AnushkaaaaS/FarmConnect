@@ -7,7 +7,6 @@ import subscriptionImage from '../assets/subscription-image.png';
 import Footer from './Footer';
 import ChatBot from './ChatBot';
 import Chat from './Chat';
-import { fetchFromApi } from '../api';  // <-- import your helper
 
 const FarmerDashboard = () => {
   const navigate = useNavigate();
@@ -25,7 +24,7 @@ const FarmerDashboard = () => {
           return;
         }
 
-        const response = await fetchFromApi('/api/farmer/status', {
+        const response = await fetch('https://farmconnect-by0t.onrender.com/api/farmer/status', {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`

@@ -4,7 +4,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BuyerNavBar from './BuyerNavBar';
 import './CheckoutPage.css';
-import { fetchFromApi } from '../api'; // ✅ import centralized helper
 
 const CheckoutPage = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -24,7 +23,7 @@ const CheckoutPage = () => {
         if (!token) return;
 
         try {
-            const response = await fetchFromApi('/api/user/status', {
+            const response = await fetch('https://farmconnect-by0t.onrender.com/api/user/status', {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -47,7 +46,7 @@ const CheckoutPage = () => {
         }
 
         try {
-            const response = await fetchFromApi('/api/cart', {
+            const response = await fetch('https://farmconnect-by0t.onrender.com/api/cart', {
                 method: 'GET',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -81,7 +80,7 @@ const CheckoutPage = () => {
         };
 
         try {
-            const response = await fetchFromApi('/api/checkout', {
+            const response = await fetch('https://farmconnect-by0t.onrender.com/api/checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

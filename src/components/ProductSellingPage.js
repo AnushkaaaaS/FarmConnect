@@ -28,7 +28,11 @@ const handleSellProducts = () => {
   const [quantity, setQuantity] = useState(editingProduct?.quantity || "");
   const [unit, setUnit] = useState(editingProduct?.unit || "");
   const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(editingProduct?.imageUrl || ""); // Initialize with existing image if editing
+const [imagePreview, setImagePreview] = useState(
+  editingProduct?.imageUrl?.startsWith("http")
+    ? editingProduct.imageUrl
+    : `https://farmconnect-by0t.onrender.com/${editingProduct?.imageUrl || ""}`
+);
    
 
   const handleImageUpload = (e) => {
@@ -126,11 +130,12 @@ const handleSellProducts = () => {
             <div className="form-group">
               <label>Product Image:</label>
               <input type="file" accept="image/*" onChange={handleImageUpload} />
-              {imagePreview && (
-                <div className="image-preview">
-                  <img src={imagePreview} alt="Preview" />
-                </div>
-              )}
+             {imagePreview && (
+  <div className="image-preview">
+    <img src={imagePreview} alt="Preview" />
+  </div>
+)}
+
             </div>
           </div>
 

@@ -4,7 +4,6 @@ import './Cart.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import BuyerNavBar from './BuyerNavBar';
-import { fetchFromApi } from '../api'; // ✅ import centralized helper
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
@@ -24,7 +23,7 @@ const Cart = () => {
             }
 
             try {
-                const response = await fetchFromApi('/api/cart', {
+                const response = await fetch('https://farmconnect-by0t.onrender.com/api/cart', {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -49,7 +48,7 @@ const Cart = () => {
             if (!token) return;
 
             try {
-                const response = await fetchFromApi('/api/user/status', {
+                const response = await fetch('https://farmconnect-by0t.onrender.com/api/user/status', {
                     method: 'GET',
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -80,7 +79,7 @@ const Cart = () => {
         toast.success('Item removed from cart!');
 
         try {
-            const response = await fetchFromApi(`/api/cart/${id}`, {
+            const response = await fetch(`https://farmconnect-by0t.onrender.com/api/cart/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -107,7 +106,7 @@ const Cart = () => {
     const updateQuantityOnBackend = async (id, newQuantity) => {
         const token = localStorage.getItem('token');
         try {
-            const response = await fetchFromApi('/api/cart', {
+            const response = await fetch('https://farmconnect-by0t.onrender.com/api/cart', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
