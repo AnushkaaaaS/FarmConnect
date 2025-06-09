@@ -49,3 +49,22 @@
     font-weight: bold;
     font-size: 1.5em;
 }
+
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar-links {
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding-top: 10px;
+  }
+
+  .navbar-links li {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}

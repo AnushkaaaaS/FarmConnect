@@ -111,3 +111,30 @@
     max-width: 750px;
     margin: 0 auto;
 }
+
+
+@media (max-width: 1024px) {
+  .featured-farmers-cards {
+    grid-template-columns: repeat(2, 1fr); /* 2 cards per row on tablets */
+  }
+}
+
+@media (max-width: 600px) {
+  .featured-farmers-cards {
+    grid-template-columns: 1fr; /* 1 card per row on small screens */
+  }
+
+  .featured-farmer-card {
+    padding: 20px 15px;
+  }
+
+  .farmer-image {
+    width: 120px;
+    height: 120px;
+  }
+
+  .shop-button {
+    font-size: 1rem;
+    padding: 10px 20px;
+  }
+}

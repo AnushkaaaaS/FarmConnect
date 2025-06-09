@@ -350,10 +350,33 @@ body, html {
 }
 
 @media (max-width: 768px) {
+  .hero-section {
+    background-attachment: scroll;
+    height: auto;
+    padding: 40px 20px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
   .hero-content {
     max-width: 100%;
     text-align: center;
-    padding-top: 20px;
+    padding: 0;
+  }
+
+  .hero-section h1 {
+    font-size: 28px;
+  }
+
+  .hero-section p {
+    font-size: 16px;
+  }
+
+  .shop-now-btn {
+    padding: 12px 20px;
+    font-size: 16px;
   }
 
   .categories-container {
@@ -372,26 +395,31 @@ body, html {
   }
 
   .subscription-plan {
-    width: 100%;
+    width: 90%;
     margin-bottom: 20px;
   }
 
   .about-us-section {
     flex-direction: column;
+    padding: 30px 20px;
+    text-align: center;
   }
 
   .about-us-content,
   .about-us-stats {
     width: 100%;
   }
+
+  .about-us-content p {
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .about-us-content h2 {
+    font-size: 1.5rem;
+  }
+
+  .stat-item p {
+    font-size: 1rem;
+  }
 }
-.subscription-benefits {
-  background-color: #f0fff0;
-  padding: 20px;
-  margin: 20px 0;
-  border: 1px solid #c3e6cb;
-  border-radius: 5px;
-}   
-
-
-

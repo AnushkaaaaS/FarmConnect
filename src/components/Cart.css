@@ -191,3 +191,83 @@
     font-size: 14px;
     font-weight: bold;
 }
+
+/* Add this at the bottom of your Cart.css file */
+
+/* Mobile Responsive Styles */
+@media (max-width: 600px) {
+  .cart-page-container {
+    padding: 10px;
+    max-width: 100%;
+    margin: 10px;
+  }
+
+  .cart-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cart-items {
+    width: 100%;
+  }
+
+  .cart-item {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .cart-item-image {
+    width: 80%;
+    max-width: 250px;
+    margin: 0 0 15px 0;
+    object-fit: contain;
+  }
+
+  .cart-item-details {
+    width: 100%;
+    text-align: center;
+  }
+
+  .quantity-controls {
+    justify-content: center;
+  }
+
+  .quantity-controls button {
+    padding: 12px 18px;
+    margin: 0 8px;
+    font-size: 18px;
+  }
+
+  .remove-button {
+    justify-content: center;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  .price-details-card {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 20px;
+  }
+
+  .checkout-button {
+    font-size: 18px;
+    padding: 15px;
+  }
+
+  /* Optional: reduce font sizes on small screens */
+  h1 {
+    font-size: 24px;
+  }
+
+  .cart-item-details h3 {
+    font-size: 20px;
+  }
+
+  .price-detail p {
+    font-size: 16px;
+  }
+}

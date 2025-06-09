@@ -1,44 +1,86 @@
-/* FarmerNavBar.css */
 .farmer-navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background-color: #4CAF50; /* Green or your preferred color */
-    z-index: 1000; /* Ensure it's above other elements */
-    padding: 10px 20px; /* Adjust padding for better spacing */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Optional shadow */
-}
-.farmer-navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #4CAF50; /* Example background color */
-    padding: 10px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #4CAF50;
+  z-index: 1000;
+  padding: 10px 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .navbar-logo h2 {
-    color: white;
-    cursor: pointer;
+  color: white;
+  cursor: pointer;
+  margin: 0;
 }
 
+.hamburger {
+  display: none;
+  font-size: 1.5rem;
+  color: white;
+  cursor: pointer;
+}
+
+/* Nav links */
 .navbar-links {
-    list-style: none;
-    display: flex;
-    gap: 20px;
+  list-style: none;
+  display: flex;
+  gap: 20px;
+  margin: 0;
+  padding: 0;
 }
 
 .navbar-links li {
-    cursor: pointer;
-    color: white;
-    display: flex;
-    align-items: center;
+  cursor: pointer;
+  color: white;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
 }
 
 .icon {
-    margin-right: 8px;
+  margin-right: 8px;
+  font-size: 1.1rem;
 }
 
 li:hover {
-    opacity: 0.8;
+  opacity: 0.8;
+}
+
+/* --- Mobile Styles --- */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #4CAF50;
+    padding: 10px 0;
+  }
+
+  .navbar-links.open {
+    display: flex;
+  }
+
+  .navbar-links li {
+    padding: 10px 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    justify-content: center;
+  }
+
+  .navbar-links li:first-child {
+    border-top: none;
+  }
+
+  .navbar-logo {
+    flex-grow: 1;
+  }
 }
