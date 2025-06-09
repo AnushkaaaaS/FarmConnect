@@ -3,7 +3,6 @@ import './BuyerAccountPage.css'; // Custom CSS for BuyerAccountPage
 import BuyerNavBar from './BuyerNavBar'; // Import BuyerNavBar component
 import buyerIcon from '../assets/buyer.jpg'; // Default buyer icon image
 import { useNavigate } from 'react-router-dom'; // For navigation
-import { fetchFromApi } from '../api'; // adjust if path differs
 
 const BuyerAccountPage = () => {
     const [buyer, setBuyer] = useState(null);
@@ -12,7 +11,7 @@ const BuyerAccountPage = () => {
     useEffect(() => {
         const buyerFromStorage = JSON.parse(localStorage.getItem('buyer'));
         if (buyerFromStorage && buyerFromStorage.email) {
-            fetchFromApi(`/api/buyer-details?email=${buyerFromStorage.email}`)
+            fetch(`https://farmconnect-by0t.onrender.com/api/buyer-details?email=${buyerFromStorage.email}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.success) {

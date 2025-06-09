@@ -1,8 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { fetchFromApi } from '../api';  // import your helper
-
 
 const YourProductsPage = () => {
     const [products, setProducts] = useState([]);
@@ -24,7 +22,7 @@ const YourProductsPage = () => {
                     },
                 };
     
-                const response = await fetchFromApi('/api/farmer/products', config);
+                const response = await axios.get('https://farmconnect-by0t.onrender.com/api/farmer/products', config);
                 setProducts(response.data); // Set the products data
             } catch (error) {
                 console.error("Error fetching farmer's products", error);

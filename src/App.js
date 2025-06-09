@@ -8,6 +8,8 @@ import FarmerRegister from './components/FarmerRegister';
 import BuyerLogin from './components/BuyerLogin';
 import BuyerRegister from './components/BuyerRegister';
 import BuyerDashboard from './components/BuyerDashboard';
+import FarmerAnalytics from './components/FarmerAnalytics';
+
 
 import Products from './components/Products';
 import Cart from './components/Cart'; // Import CartPage if created
@@ -29,6 +31,7 @@ import FarmingToolsPage from './components/FarmingToolsPage';
 import BuyerSubscriptionPage from './components/SubscriptionForm';
 import ResourceHubPage from './components/ResourceHubPage';
 import PredictCrop from './components/PredictCrop';
+import { LanguageProvider } from './context/LanguageContext';
 
 
 // Create a wrapper component for handling logout and navigation
@@ -74,6 +77,7 @@ const AppRoutes = () => {
       <Route path="/buyer-orders" element={<YourOrders />} />
       <Route path="/farming-tools-page" element={<FarmingToolsPage />} />
       <Route path="/predict" element={<PredictCrop />} />
+      <Route path="/farmer-analytics" element={<ProtectedRoute><FarmerAnalytics /></ProtectedRoute>} />
 
 
 
@@ -110,9 +114,11 @@ const AppRoutes = () => {
 // Main App Component with Router
 const App = () => {
   return (
+    <LanguageProvider>
     <Router>
       <AppRoutes /> {/* Use the wrapper component */}
     </Router>
+    </LanguageProvider>
   );
 };
 

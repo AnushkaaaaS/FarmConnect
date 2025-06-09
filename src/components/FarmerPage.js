@@ -1,7 +1,26 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSelector from './LanguageSelector';
 import farmerBackground from '../assets/farmerpagebck.jpg'; // Ensure correct path
+
+const translations = {
+  en: {
+    welcome: "Welcome Farmers!",
+    loginButton: "Farmer Login",
+    registerButton: "Farmer Register"
+  },
+  mr: {
+    welcome: "शेतकऱ्यांनो स्वागत आहे!",
+    loginButton: "शेतकरी लॉगिन",
+    registerButton: "शेतकरी नोंदणी"
+  },
+  hi: {
+    welcome: "किसानों का स्वागत है!",
+    loginButton: "किसान लॉगिन",
+    registerButton: "किसान पंजीकरण"
+  }
+};
 
 const buttonStyle = {
   width: '250px',
@@ -19,6 +38,8 @@ const buttonStyle = {
 
 const FarmerPage = () => {
   const navigate = useNavigate();
+  const { currentLanguage } = useLanguage();
+  const t = translations[currentLanguage];
 
   const handleLoginClick = () => {
     navigate('/farmer-login');
@@ -41,6 +62,7 @@ const FarmerPage = () => {
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
     }}>
+      <LanguageSelector />
       {/* Background Overlay */}
       <div style={{
         position: 'absolute',
@@ -61,7 +83,7 @@ const FarmerPage = () => {
           textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
           marginBottom: '40px',
         }}>
-          Welcome Farmers!
+          {t.welcome}
         </h1>
         
         <button 
@@ -73,7 +95,7 @@ const FarmerPage = () => {
           onMouseEnter={e => e.target.style.backgroundColor = '#38a169'}
           onMouseLeave={e => e.target.style.backgroundColor = '#2f855a'}
         >
-          Farmer Login
+          {t.loginButton}
         </button>
         
         <button 
@@ -86,7 +108,7 @@ const FarmerPage = () => {
           onMouseEnter={e => e.target.style.backgroundColor = '#38a169'}
           onMouseLeave={e => e.target.style.backgroundColor = '#2f855a'}
         >
-          Farmer Register
+          {t.registerButton}
         </button>
       </div>
     </div>

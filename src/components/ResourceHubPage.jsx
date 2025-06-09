@@ -3,8 +3,116 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSeedling, faHandHoldingUsd, faBook, faTractor, faFileAlt, faInfoCircle, faCheckCircle, faExclamationTriangle, faChevronDown, faChevronUp, faTimes } from '@fortawesome/free-solid-svg-icons';
 import FarmerNavBar from './FarmerNavBar';
 import './ResourceHubPage.css';
+import LanguageSelector from './LanguageSelector';
+import { useLanguage } from '../context/LanguageContext';
+
+
+const translations = {
+  en: {
+    pageTitle: "Farmer Resource Hub",
+    schemesTab: "Government Schemes",
+    subsidiesTab: "Subsidies",
+    grantsTab: "Government Grants",
+    tipsTab: "Farming Tips",
+    marketTab: "Market Information",
+    viewDetails: "View Details",
+    viewTips: "View Tips",
+    // Scheme modal translations
+    eligibility: "Eligibility",
+    benefits: "Benefits",
+    requiredDocuments: "Required Documents",
+    howToApply: "How to Apply",
+    importantNotes: "Important Notes",
+    applyNow: "Apply Now",
+    learnMore: "Learn More",
+    // Subsidy modal translations
+    eligibleItems: "Eligible Items",
+    subsidyAmount: "Subsidy Amount",
+    requirements: "Requirements",
+    // Tips modal translations
+    frequency: "Frequency",
+    importance: "Importance",
+    high: "High",
+    medium: "Medium",
+    low: "Low",
+    // Market modal translations
+    features: "Features",
+    source: "Source",
+    visitPortal: "Visit Portal"
+  },
+  mr: {
+    pageTitle: "शेतकरी संसाधन केंद्र",
+    schemesTab: "सरकारी योजना",
+    subsidiesTab: "सबसिडी",
+    grantsTab: "सरकारी अनुदान",
+    tipsTab: "शेतीच्या टिपा",
+    marketTab: "बाजार माहिती",
+    viewDetails: "तपशील पहा",
+    viewTips: "टिपा पहा",
+    // Scheme modal translations
+    eligibility: "पात्रता",
+    benefits: "फायदे",
+    requiredDocuments: "आवश्यक कागदपत्रे",
+    howToApply: "अर्ज कसा करावा",
+    importantNotes: "महत्वाच्या सूचना",
+    applyNow: "आता अर्ज करा",
+    learnMore: "अधिक जाणून घ्या",
+    // Subsidy modal translations
+    eligibleItems: "पात्र वस्तू",
+    subsidyAmount: "सबसिडी रक्कम",
+    requirements: "आवश्यकता",
+    // Tips modal translations
+    frequency: "वारंवारता",
+    importance: "महत्त्व",
+    high: "उच्च",
+    medium: "मध्यम",
+    low: "कमी",
+    // Market modal translations
+    features: "वैशिष्ट्ये",
+    source: "स्त्रोत",
+    visitPortal: "पोर्टल भेट द्या"
+  },
+  hi: {
+    pageTitle: "किसान संसाधन केंद्र",
+    schemesTab: "सरकारी योजनाएँ",
+    subsidiesTab: "सब्सिडी",
+    grantsTab: "सरकारी अनुदान",
+    tipsTab: "कृषि सुझाव",
+    marketTab: "बाजार जानकारी",
+    viewDetails: "विवरण देखें",
+    viewTips: "सुझाव देखें",
+    // Scheme modal translations
+    eligibility: "पात्रता",
+    benefits: "लाभ",
+    requiredDocuments: "आवश्यक दस्तावेज़",
+    howToApply: "आवेदन कैसे करें",
+    importantNotes: "महत्वपूर्ण नोट्स",
+    applyNow: "अभी आवेदन करें",
+    learnMore: "और जानें",
+    // Subsidy modal translations
+    eligibleItems: "पात्र वस्तुएँ",
+    subsidyAmount: "सब्सिडी राशि",
+    requirements: "आवश्यकताएँ",
+    // Tips modal translations
+    frequency: "आवृत्ति",
+    importance: "महत्व",
+    high: "उच्च",
+    medium: "मध्यम",
+    low: "कम",
+    // Market modal translations
+    features: "विशेषताएँ",
+    source: "स्रोत",
+    visitPortal: "पोर्टल पर जाएँ"
+  }
+};
+
 
 const ResourceHubPage = () => {
+    
+  const { currentLanguage}=useLanguage();
+  const t = translations[currentLanguage];
+  
+  // ... existing state and functions ...
     const [activeTab, setActiveTab] = useState('schemes');
     const [selectedItem, setSelectedItem] = useState(null);
     const [showModal, setShowModal] = useState(false);
@@ -861,12 +969,12 @@ const ResourceHubPage = () => {
                         </div>
                         <div className="modal-body">
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faCheckCircle} /> Eligibility</h4>
+                                <h4><FontAwesomeIcon icon={faCheckCircle} /> {t.eligibility}</h4>
                                 <p>{selectedItem.eligibility}</p>
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faHandHoldingUsd} /> Benefits</h4>
+                                <h4><FontAwesomeIcon icon={faHandHoldingUsd} /> {t.benefits}</h4>
                                 <ul>
                                     {selectedItem.benefits.map((benefit, i) => (
                                         <li key={i}>{benefit}</li>
@@ -875,7 +983,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faFileAlt} /> Required Documents</h4>
+                                <h4><FontAwesomeIcon icon={faFileAlt} /> {t.requiredDocuments}</h4>
                                 <ul>
                                     {selectedItem.documents.map((doc, i) => (
                                         <li key={i}>{doc}</li>
@@ -884,7 +992,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faInfoCircle} /> How to Apply</h4>
+                                <h4><FontAwesomeIcon icon={faInfoCircle} /> {t.howToApply}</h4>
                                 <ol>
                                     {selectedItem.howToApply.map((step, i) => (
                                         <li key={i}>{step}</li>
@@ -893,7 +1001,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faExclamationTriangle} /> Important Notes</h4>
+                                <h4><FontAwesomeIcon icon={faExclamationTriangle} /> {t.importantNotes}</h4>
                                 <ul>
                                     {selectedItem.importantNotes.map((note, i) => (
                                         <li key={i}>{note}</li>
@@ -902,7 +1010,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <a href={selectedItem.link} target="_blank" rel="noopener noreferrer" className="apply-link">
-                                Apply Now <FontAwesomeIcon icon={faFileAlt} />
+                                {t.applyNow} <FontAwesomeIcon icon={faFileAlt} />
                             </a>
                         </div>
                     </div>
@@ -919,13 +1027,13 @@ const ResourceHubPage = () => {
                         </div>
                         <div className="modal-body">
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faCheckCircle} /> Eligible Items</h4>
+                                <h4><FontAwesomeIcon icon={faCheckCircle} /> {t.eligibleItems}</h4>
                                 <div className="eligible-items">
                                     {selectedItem.eligibleItems.map((item, i) => (
                                         <div key={i} className="eligible-item">
                                             <h5>{item.name}</h5>
                                             <p className="subsidy-amount">{item.subsidy}</p>
-                                            <h6>Requirements:</h6>
+                                            <h6>{t.requirements}:</h6>
                                             <ul>
                                                 {item.requirements.map((req, j) => (
                                                     <li key={j}>{req}</li>
@@ -937,7 +1045,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faInfoCircle} /> How to Apply</h4>
+                                <h4><FontAwesomeIcon icon={faInfoCircle} /> {t.howToApply}</h4>
                                 <ol>
                                     {selectedItem.howToApply.map((step, i) => (
                                         <li key={i}>{step}</li>
@@ -946,7 +1054,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faExclamationTriangle} /> Important Notes</h4>
+                                <h4><FontAwesomeIcon icon={faExclamationTriangle} /> {t.importantNotes}</h4>
                                 <ul>
                                     {selectedItem.importantNotes.map((note, i) => (
                                         <li key={i}>{note}</li>
@@ -955,7 +1063,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <a href={selectedItem.link} target="_blank" rel="noopener noreferrer" className="apply-link">
-                                Learn More <FontAwesomeIcon icon={faFileAlt} />
+                                {t.learnMore} <FontAwesomeIcon icon={faFileAlt} />
                             </a>
                         </div>
                     </div>
@@ -978,10 +1086,10 @@ const ResourceHubPage = () => {
                                         <p>{tip.description}</p>
                                         <div className="tip-meta">
                                             <span className="frequency">
-                                                <FontAwesomeIcon icon={faInfoCircle} /> Frequency: {tip.frequency}
+                                                <FontAwesomeIcon icon={faInfoCircle} /> {t.frequency}: {tip.frequency}
                                             </span>
                                             <span className={`importance ${tip.importance.toLowerCase()}`}>
-                                                <FontAwesomeIcon icon={faExclamationTriangle} /> Importance: {tip.importance}
+                                                <FontAwesomeIcon icon={faExclamationTriangle} /> {t.importance}: {tip.importance}
                                             </span>
                                         </div>
                                     </div>
@@ -1002,7 +1110,7 @@ const ResourceHubPage = () => {
                         </div>
                         <div className="modal-body">
                             <div className="features-section">
-                                <h4>Features</h4>
+                                <h4>{t.features}</h4>
                                 <ul>
                                     {selectedItem.features.map((feature, i) => (
                                         <li key={i}>{feature}</li>
@@ -1011,9 +1119,9 @@ const ResourceHubPage = () => {
                             </div>
 
                             <div className="source-section">
-                                <p>Source: {selectedItem.source}</p>
+                                <p>{t.source}: {selectedItem.source}</p>
                                 <a href={selectedItem.link} target="_blank" rel="noopener noreferrer" className="market-link">
-                                    Visit Portal <FontAwesomeIcon icon={faFileAlt} />
+                                    {t.visitPortal} <FontAwesomeIcon icon={faFileAlt} />
                                 </a>
                             </div>
                         </div>
@@ -1031,12 +1139,12 @@ const ResourceHubPage = () => {
                         </div>
                         <div className="modal-body">
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faCheckCircle} /> Eligibility</h4>
+                                <h4><FontAwesomeIcon icon={faCheckCircle} /> {t.eligibility}</h4>
                                 <p>{selectedItem.eligibility}</p>
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faHandHoldingUsd} /> Benefits</h4>
+                                <h4><FontAwesomeIcon icon={faHandHoldingUsd} /> {t.benefits}</h4>
                                 <ul>
                                     {selectedItem.benefits.map((benefit, i) => (
                                         <li key={i}>{benefit}</li>
@@ -1045,7 +1153,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faFileAlt} /> Required Documents</h4>
+                                <h4><FontAwesomeIcon icon={faFileAlt} /> {t.requiredDocuments}</h4>
                                 <ul>
                                     {selectedItem.documents.map((doc, i) => (
                                         <li key={i}>{doc}</li>
@@ -1054,7 +1162,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faInfoCircle} /> How to Apply</h4>
+                                <h4><FontAwesomeIcon icon={faInfoCircle} /> {t.howToApply}</h4>
                                 <ol>
                                     {selectedItem.howToApply.map((step, i) => (
                                         <li key={i}>{step}</li>
@@ -1063,7 +1171,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <div className="detail-section">
-                                <h4><FontAwesomeIcon icon={faExclamationTriangle} /> Important Notes</h4>
+                                <h4><FontAwesomeIcon icon={faExclamationTriangle} /> {t.importantNotes}</h4>
                                 <ul>
                                     {selectedItem.importantNotes.map((note, i) => (
                                         <li key={i}>{note}</li>
@@ -1072,7 +1180,7 @@ const ResourceHubPage = () => {
                             </div>
 
                             <a href={selectedItem.link} target="_blank" rel="noopener noreferrer" className="apply-link">
-                                Apply Now <FontAwesomeIcon icon={faFileAlt} />
+                                {t.applyNow} <FontAwesomeIcon icon={faFileAlt} />
                             </a>
                         </div>
                     </div>
@@ -1086,33 +1194,34 @@ const ResourceHubPage = () => {
     return (
         <div className="resource-hub-page">
             <FarmerNavBar />
+            <LanguageSelector />
             <div className="resource-hub-content">
-                <h1>Farmer Resource Hub</h1>
+                <h1>{t.pageTitle}</h1>
                 
                 <div className="tabs">
                     <button 
                         className={`tab ${activeTab === 'schemes' ? 'active' : ''}`}
                         onClick={() => setActiveTab('schemes')}
                     >
-                        <FontAwesomeIcon icon={faHandHoldingUsd} /> Government Schemes
+                        <FontAwesomeIcon icon={faHandHoldingUsd} /> {t.schemes}
                     </button>
                     <button 
                         className={`tab ${activeTab === 'subsidies' ? 'active' : ''}`}
                         onClick={() => setActiveTab('subsidies')}
                     >
-                        <FontAwesomeIcon icon={faSeedling} /> Subsidies
+                        <FontAwesomeIcon icon={faSeedling} /> {t.subsidies}
                     </button>
                     <button 
                         className={`tab ${activeTab === 'grants' ? 'active' : ''}`}
                         onClick={() => setActiveTab('grants')}
                     >
-                        <FontAwesomeIcon icon={faHandHoldingUsd} /> Government Grants
+                        <FontAwesomeIcon icon={faHandHoldingUsd} /> {t.grants}
                     </button>
                     <button 
                         className={`tab ${activeTab === 'tips' ? 'active' : ''}`}
                         onClick={() => setActiveTab('tips')}
                     >
-                        <FontAwesomeIcon icon={faTractor} /> Farming Tips
+                        <FontAwesomeIcon icon={faTractor} /> {t.tips}
                     </button>
                     <button 
                         className={`tab ${activeTab === 'market' ? 'active' : ''}`}

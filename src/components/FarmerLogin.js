@@ -1,9 +1,43 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; // for redirecting after login
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSelector from './LanguageSelector';
 import farmerLoginBackground from '../assets/farmerpagebck.jpg'; // Import your background image
 import { toast, ToastContainer } from 'react-toastify'; // Import toast for notifications
 import 'react-toastify/dist/ReactToastify.css'; // Toastify styles
+
+const translations = {
+  en: {
+    title: "Farmer Login",
+    emailPlaceholder: "Email",
+    passwordPlaceholder: "Password",
+    loginButton: "Login",
+    loadingText: "Logging in...",
+    successMessage: "Login successful!",
+    errorMessage: "Invalid email or password",
+    generalError: "An error occurred. Please try again."
+  },
+  mr: {
+    title: "शेतकरी लॉगिन",
+    emailPlaceholder: "ईमेल",
+    passwordPlaceholder: "पासवर्ड",
+    loginButton: "लॉगिन",
+    loadingText: "लॉगिन होत आहे...",
+    successMessage: "लॉगिन यशस्वी!",
+    errorMessage: "अवैध ईमेल किंवा पासवर्ड",
+    generalError: "एक त्रुटी आली. कृपया पुन्हा प्रयत्न करा."
+  },
+  hi: {
+    title: "किसान लॉगिन",
+    emailPlaceholder: "ईमेल",
+    passwordPlaceholder: "पासवर्ड",
+    loginButton: "लॉगिन",
+    loadingText: "लॉगिन हो रहा है...",
+    successMessage: "लॉगिन सफल!",
+    errorMessage: "अमान्य ईमेल या पासवर्ड",
+    generalError: "एक त्रुटी हुई। कृपया पुनः प्रयास करें।"
+  }
+};
 
 const FarmerLogin = () => {
   const [email, setEmail] = useState('');
@@ -11,55 +45,47 @@ const FarmerLogin = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const { currentLanguage } = useLanguage();
+  const t = translations[currentLanguage];
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Basic email validation
     if (!/\S+@\S+\.\S+/.test(email)) {
-        setErrorMessage('Invalid email address');
-        return;
+      setErrorMessage(t.errorMessage);
+      return;
     }
 
     setErrorMessage('');
     setLoading(true);
 
     try {
-        // Call the correct farmer login API endpoint
-        const response = await fetch('https://farmconnect-by0t.onrender.com/api/farmer-login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        });
+      const response = await fetch('https://farmconnect-by0t.onrender.com/api/farmer-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (response.ok) {
-            // Show success toast
-            toast.success('Login successful!', { position: "top-center", autoClose: 2000 });
-            console.log('Farmer Login:', data); // Log response data for debugging
-
-            // Store the token in localStorage
-            localStorage.setItem('token', data.token); // Store the JWT token
-
-            // Store farmer info in localStorage (optional)
-            localStorage.setItem('farmer', JSON.stringify(data.farmer));
-
-            // Redirect to farmer dashboard on successful login
-            navigate('/farmer-dashboard');
-        } else {
-            // If response is not OK, show an error
-            setErrorMessage(data.message || 'Login failed');
-        }
+      if (response.ok) {
+        toast.success(t.successMessage, { position: "top-center", autoClose: 2000 });
+        console.log('Farmer Login:', data);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('farmer', JSON.stringify(data.farmer));
+        navigate('/farmer-dashboard');
+      } else {
+        setErrorMessage(data.message || t.errorMessage);
+      }
     } catch (error) {
-        console.error('Login error:', error); // Log error for debugging
-        setErrorMessage('An error occurred. Please try again.');
+      console.error('Login error:', error);
+      setErrorMessage(t.generalError);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
   return (
     <div
@@ -76,6 +102,7 @@ const FarmerLogin = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
+      <LanguageSelector />
       <div
         style={{
           position: 'absolute',
@@ -104,7 +131,7 @@ const FarmerLogin = () => {
             textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)',
           }}
         >
-          Farmer Login
+          {t.title}
         </h2>
 
         <form
@@ -117,7 +144,7 @@ const FarmerLogin = () => {
         >
           <input
             type="email"
-            placeholder="Email"
+            placeholder={t.emailPlaceholder}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             style={{
@@ -133,7 +160,7 @@ const FarmerLogin = () => {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder={t.passwordPlaceholder}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             style={{
@@ -176,7 +203,7 @@ const FarmerLogin = () => {
             }}
             disabled={loading}
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {loading ? t.loadingText : t.loginButton}
           </button>
         </form>
 

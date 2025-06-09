@@ -226,13 +226,12 @@ Use markdown formatting for better readability. Make important terms bold using 
 
   return (
     <div className="chatbot-wrapper">
-      {!isOpen && (
-        <button className="chatbot-toggle" onClick={toggleChat}>
-          {language === 'hindi' ? 'कृषि सहायक से बात करें' :
-           language === 'marathi' ? 'शेती सहाय्यकाशी बोला' :
-           'Talk to Farming Assistant'}
-        </button>
-      )}
+    {!isOpen && (
+  <button className="chatbot-toggle" onClick={toggleChat}>
+    Talk to Farming Assistant
+  </button>
+)}
+
       {isOpen && (
         <div className="chatbot-container">
           <div className="chatbot-header">
