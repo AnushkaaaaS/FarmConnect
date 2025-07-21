@@ -1,70 +1,45 @@
-# Getting Started with Create React App
+# 🌾 FarmConnect
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+**FarmConnect** is a multilingual agri-commerce platform that empowers farmers by removing middlemen and enabling direct farm-to-consumer interaction. Built with a robust MERN stack and enhanced with AI-powered crop support and real-time dashboards, it aims to make agricultural trade more transparent, accessible, and fair.
 
-## Available Scripts
+## 🚀 Live Demo
+👉 [farm-connect-lake.vercel.app](https://farm-connect-lake.vercel.app)
 
-In the project directory, you can run:
+## 🧩 Features
 
-### `npm start`
+- 🔐 **Secure Dual Authentication**  
+  Separate login portals for farmers and consumers, built using JWT.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- 🧑‍🌾 **Farmer Dashboard**  
+  Add and manage products, track orders, and access government schemes — all in one place.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- 🛒 **Full E-Commerce Flow**  
+  Includes product listings, cart, subscriptions, and Razorpay payment gateway.
 
-### `npm test`
+- 🌱 **Crop Health Detection**  
+  Upload plant images to get instant health predictions using a CNN model.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- 🤖 **Gemini Chatbot**  
+  AI chatbot integrated for real-time help, updates, and product assistance.
 
-### `npm run build`
+- 🌍 **Multilingual Interface**  
+  Built with `react-i18next` to support users in multiple languages.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🛠️ Tech Stack
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Frontend**: React.js, Tailwind CSS, React-i18next  
+- **Backend**: Node.js, Express.js  
+- **Database**: MongoDB  
+- **Authentication**: JWT  
+- **Payments**: Razorpay  
+- **AI/ML**: TensorFlow (CNN), Gemini API  
+- **Deployment**: Vercel
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 📫 Contact
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Have feedback or ideas?  
+Reach out on [LinkedIn](https://www.linkedin.com/in/anushka-sawant-2511b4284) or raise an issue right here on GitHub!
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
